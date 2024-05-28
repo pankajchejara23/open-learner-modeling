@@ -1,0 +1,1450 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.550">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Vara-modeling</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Vara-modeling</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Modeling</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#exploring-log-data" id="toc-exploring-log-data" class="nav-link active" data-scroll-target="#exploring-log-data">Exploring log data</a></li>
+  <li><a href="#preprocessing-data" id="toc-preprocessing-data" class="nav-link" data-scroll-target="#preprocessing-data">Preprocessing data</a></li>
+  <li><a href="#creating-bayesian-network" id="toc-creating-bayesian-network" class="nav-link" data-scroll-target="#creating-bayesian-network">Creating Bayesian Network</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+
+
+<p>Vara is a sandbox platform built upon Drupal to facilitates the implementation of research ideas in educational domain. This tool allows teachers/researchers to create H5P-based learning materials.</p>
+<p>The tool also records students’ interactions. This notebook analyzes those interactions data in the context of a new functionality added to the Vara, i.e., instructional trajectories.</p>
+<p>The task is to generate open learner model using trajectories’ data and domain model from VARA sandbox.</p>
+<p>We have logs from students attempts of learning tasks grouped under activities which in turn combined into episodes.</p>
+<section id="exploring-log-data" class="level2">
+<h2 class="anchored" data-anchor-id="exploring-log-data">Exploring log data</h2>
+<div id="2d38c518" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># loading data</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">'instructional-trajectory-session-24-results.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p><strong>Python library to consider for bayesian analysis</strong></p>
+<ol type="1">
+<li>BayesPy</li>
+<li>Pgmpy</li>
+<li>Bnlearn</li>
+<li>PyBn</li>
+</ol>
+<div id="cfb39569" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="2">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Student</th>
+<th data-quarto-table-cell-role="th">Time spent</th>
+<th data-quarto-table-cell-role="th">Last completed</th>
+<th data-quarto-table-cell-role="th">Harilik murd</th>
+<th data-quarto-table-cell-role="th">Meenutamine</th>
+<th data-quarto-table-cell-role="th">Used supportive materials</th>
+<th data-quarto-table-cell-role="th">1. digitund_harilik murd_ASK1: meenutamine</th>
+<th data-quarto-table-cell-role="th">Required</th>
+<th data-quarto-table-cell-role="th">Time spent in seconds</th>
+<th data-quarto-table-cell-role="th">Number of retries</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">Score.103</th>
+<th data-quarto-table-cell-role="th">Answer (left empty if library is not supported).103</th>
+<th data-quarto-table-cell-role="th">5. digitund_erinimeliste algebraliste murdude liitmine_elulise sisuga ülesanne_2</th>
+<th data-quarto-table-cell-role="th">Required.104</th>
+<th data-quarto-table-cell-role="th">Time spent in seconds.104</th>
+<th data-quarto-table-cell-role="th">Number of retries.104</th>
+<th data-quarto-table-cell-role="th">Used tips.104</th>
+<th data-quarto-table-cell-role="th">Success.104</th>
+<th data-quarto-table-cell-role="th">Score.104</th>
+<th data-quarto-table-cell-role="th">Answer (left empty if library is not supported).104</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Piret Koppel</td>
+<td>49m 46s</td>
+<td>NaN</td>
+<td>E1</td>
+<td>A1</td>
+<td>0</td>
+<td>T1</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>0</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>T5</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>0</td>
+<td>0</td>
+<td>No</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Peetri kooli kasutaja 56</td>
+<td>983h 30m</td>
+<td>NaN</td>
+<td>E1</td>
+<td>A1</td>
+<td>0</td>
+<td>T1</td>
+<td>Yes</td>
+<td>228.0</td>
+<td>2</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>T5</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>0</td>
+<td>0</td>
+<td>No</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Peetri kooli kasutaja 57</td>
+<td>983h 31m 33s</td>
+<td>NaN</td>
+<td>E1</td>
+<td>A1</td>
+<td>0</td>
+<td>T1</td>
+<td>Yes</td>
+<td>177.0</td>
+<td>1</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>T5</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>0</td>
+<td>0</td>
+<td>No</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>Peetri kooli kasutaja 58</td>
+<td>983h 28m 49s</td>
+<td>NaN</td>
+<td>E1</td>
+<td>A1</td>
+<td>0</td>
+<td>T1</td>
+<td>Yes</td>
+<td>10.0</td>
+<td>5</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>T5</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>0</td>
+<td>0</td>
+<td>No</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>Peetri kooli kasutaja 59</td>
+<td>843h 35m 32s</td>
+<td>NaN</td>
+<td>E1</td>
+<td>A1</td>
+<td>0</td>
+<td>T1</td>
+<td>Yes</td>
+<td>48.0</td>
+<td>2</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>T5</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>0</td>
+<td>0</td>
+<td>No</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+</tbody>
+</table>
+
+<p>5 rows × 911 columns</p>
+</div>
+</div>
+</div>
+</div>
+<p>The dataset contains students’ interactions as well their response for all the tasks in a particularly chosen trajectories.</p>
+</section>
+<section id="preprocessing-data" class="level2">
+<h2 class="anchored" data-anchor-id="preprocessing-data">Preprocessing data</h2>
+<p>We will convert data from current format to another format having each interaction of student as a seperate record.</p>
+<div id="5d1820b9" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> {<span class="dv">0</span>:<span class="st">'required'</span>,<span class="dv">1</span>:<span class="st">'time'</span>,<span class="dv">2</span>:<span class="st">'attempts'</span>,<span class="dv">3</span>:<span class="st">'hints'</span>,<span class="dv">4</span>:<span class="st">'success'</span>,<span class="dv">5</span>:<span class="st">'score'</span>,<span class="dv">6</span>:<span class="st">'answer'</span>,<span class="dv">7</span>:<span class="st">'---'</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="9b02d083" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> extract_data(row_data):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">""" This function process records from log data obtained from vara on instructional trajectories.</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">        row_data (dict): row record in dictionary format</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">        records : a dictionary containing processed records</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    current_episode <span class="op">=</span> <span class="st">''</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    current_activity <span class="op">=</span> <span class="st">''</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    current_task <span class="op">=</span> <span class="st">''</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    records <span class="op">=</span> {}</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> item <span class="kw">in</span> row_data:</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        current_record <span class="op">=</span> {}</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        item <span class="op">=</span> <span class="bu">str</span>(item)</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="st">'E'</span> <span class="kw">in</span> item <span class="kw">and</span> <span class="st">'H5P'</span> <span class="kw">not</span> <span class="kw">in</span> item:</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>            current_episode <span class="op">=</span> item</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> <span class="st">'A'</span> <span class="kw">in</span> item <span class="kw">and</span> <span class="st">'H5P'</span> <span class="kw">not</span> <span class="kw">in</span> item:</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>            current_activity <span class="op">=</span> item</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> <span class="st">'T'</span> <span class="kw">in</span> item <span class="kw">and</span> <span class="st">'H5P'</span> <span class="kw">not</span> <span class="kw">in</span> item:</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>            current_task <span class="op">=</span> item</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>            start <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> <span class="st">'H5P'</span> <span class="kw">in</span> item <span class="kw">or</span> <span class="st">'library'</span> <span class="kw">in</span> item <span class="kw">or</span> <span class="st">':'</span> <span class="kw">in</span> item:</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> current_episode <span class="op">==</span> <span class="st">''</span> <span class="kw">or</span> current_activity <span class="op">==</span> <span class="st">''</span> <span class="kw">or</span> current_task <span class="op">==</span> <span class="st">''</span>:</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>                <span class="cf">continue</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="kw">not</span> start <span class="op">&gt;</span><span class="dv">6</span>:</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>                    records[<span class="ss">f'</span><span class="sc">{</span>current_episode<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>current_activity<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>current_task<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>labels[start]<span class="sc">}</span><span class="ss">'</span>]  <span class="op">=</span> item</span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>                start <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>    save_records <span class="op">=</span> {} </span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>    processed_record <span class="op">=</span> records</span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> key, value <span class="kw">in</span> processed_record.items():</span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>        parts <span class="op">=</span> key.split(<span class="st">'_'</span>)</span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>        heirarchy <span class="op">=</span> <span class="st">'_'</span>.join(parts[:<span class="dv">3</span>])</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> heirarchy <span class="kw">not</span> <span class="kw">in</span> save_records.keys():</span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>            save_records[heirarchy] <span class="op">=</span> {}</span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>        save_records[heirarchy][parts[<span class="dv">3</span>]] <span class="op">=</span> value</span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> save_records</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="4777149e" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_df(data):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""This function transforms current csv file into a pandas DataFrame.</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">    The dataframe contains response to each task as a seperate entry.</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">        data (DataFrame): Pandas DataFrame of csv file of instructional trajectories logs</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">        df (DataFrame): Processed dataframe</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    cols <span class="op">=</span> [<span class="st">'student'</span>,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>             <span class="st">'task_heirarchy'</span>,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>             <span class="st">'required'</span>,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>             <span class="st">'time'</span>,</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>             <span class="st">'attempts'</span>,</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>             <span class="st">'hints'</span>,</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>             <span class="st">'success'</span>,</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>             <span class="st">'score'</span>]</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># initialise the dataframe</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.DataFrame(columns<span class="op">=</span>cols)</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># iterate over each record in data</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> index <span class="kw">in</span> data.index.to_list():</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>        <span class="co"># accessing current record in dict form</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>        cur_record <span class="op">=</span> data.iloc[index].to_dict()</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># dict for processed record</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>        save_record <span class="op">=</span> {}</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>        <span class="co"># studen information</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>        save_record[<span class="st">'student'</span>] <span class="op">=</span> cur_record[<span class="st">'Student'</span>]</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>        <span class="co"># convert each record into task-wise records</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>        processed_records <span class="op">=</span> extract_data(data.iloc[index])</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>        <span class="co"># iterate for each task</span></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> task, values <span class="kw">in</span> processed_records.items():</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>            save_record[<span class="st">'task_heirarchy'</span>] <span class="op">=</span> task</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> val_key, val_val <span class="kw">in</span> values.items():</span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>                save_record[val_key] <span class="op">=</span> val_val</span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>            <span class="co"># save a record of students' response to each task seperately</span></span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>            df <span class="op">=</span> pd.concat([df, pd.DataFrame([save_record])], ignore_index<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="88cc8a06" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'hints'</span>].unique()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
+<pre><code>array(['0'], dtype=object)</code></pre>
+</div>
+</div>
+<div id="26b47b0b" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> get_df(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="c464366f" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'time'</span>] <span class="op">=</span> pd.to_numeric(df[<span class="st">'time'</span>],errors<span class="op">=</span><span class="st">'coerce'</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'hints'</span>] <span class="op">=</span> pd.to_numeric(df[<span class="st">'hints'</span>],errors<span class="op">=</span><span class="st">'coerce'</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'attempts'</span>] <span class="op">=</span> pd.to_numeric(df[<span class="st">'attempts'</span>],errors<span class="op">=</span><span class="st">'coerce'</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>df_ <span class="op">=</span> df.drop([<span class="st">'hints'</span>,<span class="st">'answer'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>df_.tail(<span class="dv">30</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="17">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">student</th>
+<th data-quarto-table-cell-role="th">task_heirarchy</th>
+<th data-quarto-table-cell-role="th">required</th>
+<th data-quarto-table-cell-role="th">time</th>
+<th data-quarto-table-cell-role="th">attempts</th>
+<th data-quarto-table-cell-role="th">success</th>
+<th data-quarto-table-cell-role="th">score</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2518</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E10_A1_T4</td>
+<td>No</td>
+<td>77.0</td>
+<td>1</td>
+<td>Yes</td>
+<td>6/6</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2519</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E10_A1_T5</td>
+<td>Yes</td>
+<td>8.0</td>
+<td>1</td>
+<td>Yes</td>
+<td>4/4</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2520</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E10_A1_T6</td>
+<td>No</td>
+<td>7.0</td>
+<td>2</td>
+<td>Yes</td>
+<td>4/4</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2521</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E10_A1_T7</td>
+<td>No</td>
+<td>19.0</td>
+<td>3</td>
+<td>Yes</td>
+<td>4/4</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2522</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E10_A1_T8</td>
+<td>Yes</td>
+<td>156.0</td>
+<td>2</td>
+<td>Yes</td>
+<td>4/4</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2523</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E10_A1_T9</td>
+<td>No</td>
+<td>124.0</td>
+<td>1</td>
+<td>Yes</td>
+<td>4/4</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2524</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E10_A1_T10</td>
+<td>No</td>
+<td>126.0</td>
+<td>7</td>
+<td>Yes</td>
+<td>4/4</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2525</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E10_A1_T11</td>
+<td>Yes</td>
+<td>121.0</td>
+<td>5</td>
+<td>Yes</td>
+<td>6/6</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2526</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E11_A1_T1</td>
+<td>Yes</td>
+<td>30.0</td>
+<td>4</td>
+<td>Yes</td>
+<td>3/3</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2527</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E11_A1_T2</td>
+<td>No</td>
+<td>23.0</td>
+<td>5</td>
+<td>Yes</td>
+<td>3/3</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2528</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E11_A1_T3</td>
+<td>No</td>
+<td>27.0</td>
+<td>2</td>
+<td>Yes</td>
+<td>3/3</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2529</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E11_A2_T1</td>
+<td>Yes</td>
+<td>73.0</td>
+<td>2</td>
+<td>Yes</td>
+<td>3/3</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2530</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E11_A2_T2</td>
+<td>No</td>
+<td>80.0</td>
+<td>5</td>
+<td>Yes</td>
+<td>4/4</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2531</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E11_A2_T3</td>
+<td>No</td>
+<td>67.0</td>
+<td>5</td>
+<td>Yes</td>
+<td>4/4</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2532</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E11_A2_T4</td>
+<td>Yes</td>
+<td>229.0</td>
+<td>3</td>
+<td>Yes</td>
+<td>8/8</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2533</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E12_A1_T1</td>
+<td>Yes</td>
+<td>286.0</td>
+<td>3</td>
+<td>Yes</td>
+<td>8/8</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2534</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E12_A1_T2</td>
+<td>Yes</td>
+<td>236.0</td>
+<td>7</td>
+<td>Yes</td>
+<td>4/4</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2535</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E12_A1_T3</td>
+<td>No</td>
+<td>466.0</td>
+<td>6</td>
+<td>Yes</td>
+<td>4/4</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2536</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E12_A1_T4</td>
+<td>No</td>
+<td>649.0</td>
+<td>17</td>
+<td>Yes</td>
+<td>4/4</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2537</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E12_A1_T5</td>
+<td>Yes</td>
+<td>180.0</td>
+<td>1</td>
+<td>Yes</td>
+<td>4/4</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2538</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E12_A1_T6</td>
+<td>No</td>
+<td>343.0</td>
+<td>5</td>
+<td>Yes</td>
+<td>4/4</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2539</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E12_A1_T7</td>
+<td>No</td>
+<td>NaN</td>
+<td>0</td>
+<td>No</td>
+<td>nan</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2540</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E12_A2_T1</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>0</td>
+<td>No</td>
+<td>nan</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2541</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E12_A2_T2</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>0</td>
+<td>No</td>
+<td>nan</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2542</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E12_A2_T3</td>
+<td>No</td>
+<td>NaN</td>
+<td>0</td>
+<td>No</td>
+<td>nan</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2543</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E12_A3_T1</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>0</td>
+<td>No</td>
+<td>nan</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2544</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E12_A3_T2</td>
+<td>No</td>
+<td>NaN</td>
+<td>0</td>
+<td>No</td>
+<td>nan</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2545</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E12_A3_T3</td>
+<td>No</td>
+<td>NaN</td>
+<td>0</td>
+<td>No</td>
+<td>nan</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2546</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E12_A3_T4</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>0</td>
+<td>No</td>
+<td>nan</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2547</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E12_A3_T5</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>0</td>
+<td>No</td>
+<td>nan</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<div id="0a44e804" class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Analyzing data for episode 11</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># df for episode 11</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>ep_df <span class="op">=</span> df_.loc[df_[<span class="st">'task_heirarchy'</span>].<span class="bu">str</span>.contains(<span class="st">'E11'</span>),:]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="5fc62ecf" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># df for student Peetri kooli kasutaja 78</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>ep_78 <span class="op">=</span> ep_df.loc[ep_df[<span class="st">'student'</span>] <span class="op">==</span> <span class="st">'Peetri kooli kasutaja 78'</span>,:]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="e6349d6c" class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ep_78.to_csv(<span class="st">'ep_78.csv'</span>, index<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="ca608c9d" class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ep_78_skills <span class="op">=</span> pd.read_csv(<span class="st">'ep_78_with_skills.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="87a0e1c8" class="cell" data-execution_count="28">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> score_to_num(x):</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> x <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="op">-</span><span class="dv">1</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>        f <span class="op">=</span> x.split(<span class="st">'/'</span>)[<span class="dv">0</span>]</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>        s <span class="op">=</span> x.split(<span class="st">'/'</span>)[<span class="dv">1</span>]</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">float</span>(f)<span class="op">/</span><span class="bu">float</span>(s)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>ep_78_skills[<span class="st">'score_'</span>] <span class="op">=</span>  ep_78_skills[<span class="st">'score'</span>].<span class="bu">apply</span>(score_to_num) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="eaf7f5dc" class="cell" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>ep_78_skills_dummy <span class="op">=</span> pd.get_dummies(ep_78_skills[<span class="st">'skill'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="aa348ba1" class="cell" data-execution_count="33">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>final_ep_78 <span class="op">=</span> pd.concat([ep_78_skills[[<span class="st">'required'</span>,<span class="st">'time'</span>,<span class="st">'attempts'</span>,<span class="st">'score_'</span>]],ep_78_skills_dummy],axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="ebae4a51" class="cell" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>final_ep_78</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="34">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">required</th>
+<th data-quarto-table-cell-role="th">time</th>
+<th data-quarto-table-cell-role="th">attempts</th>
+<th data-quarto-table-cell-role="th">score_</th>
+<th data-quarto-table-cell-role="th">A</th>
+<th data-quarto-table-cell-role="th">B</th>
+<th data-quarto-table-cell-role="th">C</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Yes</td>
+<td>30.0</td>
+<td>4</td>
+<td>1.0</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Yes</td>
+<td>30.0</td>
+<td>4</td>
+<td>1.0</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>No</td>
+<td>23.0</td>
+<td>5</td>
+<td>1.0</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>No</td>
+<td>27.0</td>
+<td>2</td>
+<td>1.0</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>No</td>
+<td>27.0</td>
+<td>2</td>
+<td>1.0</td>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">5</td>
+<td>Yes</td>
+<td>73.0</td>
+<td>2</td>
+<td>1.0</td>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">6</td>
+<td>No</td>
+<td>80.0</td>
+<td>5</td>
+<td>1.0</td>
+<td>True</td>
+<td>False</td>
+<td>False</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">7</td>
+<td>No</td>
+<td>80.0</td>
+<td>5</td>
+<td>1.0</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">8</td>
+<td>No</td>
+<td>80.0</td>
+<td>5</td>
+<td>1.0</td>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">9</td>
+<td>No</td>
+<td>67.0</td>
+<td>5</td>
+<td>1.0</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">10</td>
+<td>Yes</td>
+<td>229.0</td>
+<td>3</td>
+<td>1.0</td>
+<td>False</td>
+<td>True</td>
+<td>False</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">11</td>
+<td>Yes</td>
+<td>229.0</td>
+<td>3</td>
+<td>1.0</td>
+<td>False</td>
+<td>False</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="creating-bayesian-network" class="level1">
+<h1>Creating Bayesian Network</h1>
+<div id="82026763" class="cell" data-execution_count="51">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pgmpy.models <span class="im">import</span> BayesianNetwork</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> BayesianNetwork([(<span class="st">'A'</span>, <span class="st">'B'</span>),</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>                         (<span class="st">'A'</span>, <span class="st">'C'</span>),</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>                         (<span class="st">'B'</span>, <span class="st">'C'</span>),</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>                         (<span class="st">'A'</span>,<span class="st">'attempts'</span>),</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>                         (<span class="st">'attempts'</span>,<span class="st">'score_'</span>),</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>                         ])</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>model.fit(final_ep_78)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="93cfbe79" class="cell" data-execution_count="52">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>cpds <span class="op">=</span> model.get_cpds()</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> cpd <span class="kw">in</span> cpds:</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(cpd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>+----------+------+
+| A(False) | 0.75 |
++----------+------+
+| A(True)  | 0.25 |
++----------+------+
++----------+--------------------+---------+
+| A        | A(False)           | A(True) |
++----------+--------------------+---------+
+| B(False) | 0.4444444444444444 | 1.0     |
++----------+--------------------+---------+
+| B(True)  | 0.5555555555555556 | 0.0     |
++----------+--------------------+---------+
++----------+----------+----------+----------+---------+
+| A        | A(False) | A(False) | A(True)  | A(True) |
++----------+----------+----------+----------+---------+
+| B        | B(False) | B(True)  | B(False) | B(True) |
++----------+----------+----------+----------+---------+
+| C(False) | 0.0      | 1.0      | 1.0      | 0.5     |
++----------+----------+----------+----------+---------+
+| C(True)  | 1.0      | 0.0      | 0.0      | 0.5     |
++----------+----------+----------+----------+---------+
++-------------+--------------------+--------------------+
+| A           | A(False)           | A(True)            |
++-------------+--------------------+--------------------+
+| attempts(2) | 0.2222222222222222 | 0.3333333333333333 |
++-------------+--------------------+--------------------+
+| attempts(3) | 0.2222222222222222 | 0.0                |
++-------------+--------------------+--------------------+
+| attempts(4) | 0.1111111111111111 | 0.3333333333333333 |
++-------------+--------------------+--------------------+
+| attempts(5) | 0.4444444444444444 | 0.3333333333333333 |
++-------------+--------------------+--------------------+
++-------------+-------------+-------------+-------------+-------------+
+| attempts    | attempts(2) | attempts(3) | attempts(4) | attempts(5) |
++-------------+-------------+-------------+-------------+-------------+
+| score_(1.0) | 1.0         | 1.0         | 1.0         | 1.0         |
++-------------+-------------+-------------+-------------+-------------+</code></pre>
+</div>
+</div>
+<div id="3c8d409c" class="cell" data-execution_count="53">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pylab <span class="im">as</span> plt</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>nx_graph <span class="op">=</span> nx.DiGraph(model.edges())</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>nx.draw(nx_graph, with_labels<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Plotting open learner model using trajectories data_files/figure-html/cell-20-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
