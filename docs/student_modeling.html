@@ -212,7 +212,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<p>This post is in continuation with the <a href="">previous post</a> which presented a preliminary idea on <strong>building open learner models using Bayesian networks</strong>. The last post used the vara dataset partly and analyzed that data with some synthetically generated skill-related data. This post extends that idea with the <strong>vara dataset and actual skill-related dataset</strong>.</p>
+<p>This post is in continuation with the <a href="https://pankajchejara23.github.io/open-learner-modeling/">previous post</a> which presented a preliminary idea on <strong>building open learner models using Bayesian networks</strong>. The last post used the vara dataset partly and analyzed that data with some synthetically generated skill-related data. This post extends that idea with the <strong>vara dataset and actual skill-related dataset</strong>.</p>
 <section id="dataset" class="level1">
 <h1>Dataset</h1>
 <p>Our dataset include two seperate CSV files: one for log interaction data and another for task to skill mapping. These two datasets are explained in details below.</p>
@@ -456,7 +456,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="fig-skills" class="lightbox quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-skills-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="cmap.jpg" class="lightbox" data-glightbox="description: .lightbox-desc-1" data-gallery="quarto-lightbox-gallery-1"><img src="cmap.jpg" class="img-fluid figure-img"></a>
+<a href="cmap.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" data-glightbox="description: .lightbox-desc-1"><img src="cmap.jpg" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-skills-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: Skills structure
@@ -730,7 +730,7 @@ Figure&nbsp;1: Skills structure
 </div>
 </div>
 <p><strong>Removing tasks of no interaction data</strong>: Next, we will remove tasks with no interaction data. There are a few tasks in the instructional trajectory where no students interacted with. Before proceeding to the modeling step, we will remove all such tasks. The following tasks are the ones we will remove from our processed dataset.</p>
-<div id="f3b59e91" class="cell" data-execution_count="219">
+<div id="34bdfe05" class="cell" data-execution_count="219">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># removing tasks without any interactions</span></span>
@@ -1104,7 +1104,7 @@ Figure&nbsp;3: Complete network structure
 <h2 class="anchored" data-anchor-id="estimating-probabilities-for-skills">Estimating probabilities for skills</h2>
 <p>Now, we will use our network structure and apply an estimation algorithm, i.e., Expectation Maximization (EM). The EM algorithm could be used in cases when the network involves some latent variables (or variables for which data is not available) to learn their probabilities.</p>
 <p>The following code applies the EM algorithm and learn probabilities. Some of those probabilities are shown below.</p>
-<div id="3905878c" class="cell" data-execution_count="326">
+<div id="9e6fa430" class="cell" data-execution_count="326">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pgmpy.models <span class="im">import</span> BayesianNetwork</span>
@@ -1148,7 +1148,7 @@ Figure&nbsp;3: Complete network structure
 <section id="assigning-learned-probabilities-to-the-bayesian-network" class="level2">
 <h2 class="anchored" data-anchor-id="assigning-learned-probabilities-to-the-bayesian-network">Assigning learned probabilities to the Bayesian network</h2>
 <p>As we have probabilities learned from the log data using <strong>Expectation Maximization</strong> algorithm, we will use them to initialize our Bayesian network. Now, this network can be used for inference purposes.</p>
-<div id="6f9c1927" class="cell" data-execution_count="328">
+<div id="f2f1e277" class="cell" data-execution_count="328">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>bayes <span class="op">=</span> new_G</span>
@@ -1167,7 +1167,7 @@ Figure&nbsp;3: Complete network structure
 <p>For an intuitive interpretation of the resultant probabilities for skills, we will now plot the network with the probabilities updated according to the student’s interaction to the tasks.</p>
 <p>Let’s use interaction data of a particular student with id <code>Peetri kooli kasutaja 56</code>. We will first obtain the probabilities for different skills given the student’s interaction, and then we will plot the network with the obtained probabilities as the <strong>color of the nodes</strong>.</p>
 <p><a href="#fig-student" class="quarto-xref">Figure&nbsp;4</a> and <a href="#fig-student1" class="quarto-xref">Figure&nbsp;5</a> below show the networks for two different students.</p>
-<div id="a45fec69" class="cell" data-execution_count="317">
+<div id="3ef91a18" class="cell" data-execution_count="317">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pgmpy.inference <span class="im">import</span> VariableElimination</span>
@@ -1684,7 +1684,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","selector":".lightbox","loop":false,"descPosition":"bottom","closeEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"loop":false,"closeEffect":"zoom","openEffect":"zoom","descPosition":"bottom","selector":".lightbox"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;
