@@ -127,7 +127,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
     <a class="nav-link" href="./index.html"> 
-<span class="menu-text">Modeling</span></a>
+<span class="menu-text">Preliminary idea</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="./student_modeling.html"> 
+<span class="menu-text">Implementation using vara dataset</span></a>
   </li>  
 </ul>
           </div> <!-- /navcollapse -->
@@ -147,6 +151,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul>
   <li><a href="#exploring-log-data" id="toc-exploring-log-data" class="nav-link active" data-scroll-target="#exploring-log-data">Exploring log data</a></li>
   <li><a href="#preprocessing-data" id="toc-preprocessing-data" class="nav-link" data-scroll-target="#preprocessing-data">Preprocessing data</a></li>
+  <li><a href="#setting-learning-outcomes-for-each-task" id="toc-setting-learning-outcomes-for-each-task" class="nav-link" data-scroll-target="#setting-learning-outcomes-for-each-task">Setting learning outcomes for each task</a></li>
+  <li><a href="#converting-attributes-values-into-categories" id="toc-converting-attributes-values-into-categories" class="nav-link" data-scroll-target="#converting-attributes-values-into-categories">Converting attributes’ values into categories</a></li>
   <li><a href="#creating-bayesian-network" id="toc-creating-bayesian-network" class="nav-link" data-scroll-target="#creating-bayesian-network">Creating Bayesian Network</a></li>
   </ul>
 </nav>
@@ -161,12 +167,25 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>The tool also records students’ interactions. This notebook analyzes those interactions data in the context of a new functionality added to the Vara, i.e., instructional trajectories.</p>
 <p>The task is to generate open learner model using trajectories’ data and domain model from VARA sandbox.</p>
 <p>We have logs from students attempts of learning tasks grouped under activities which in turn combined into episodes.</p>
+<div id="fc900ad3" class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>Understanding common fractions</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>expanding <span class="kw">and</span> reducing common fractions</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>understand algebraic fractions</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>expanding <span class="kw">and</span> reducing algebraic function</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>intro to expanding <span class="kw">and</span> reducing algebraic function</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>bridging <span class="im">from</span> multiplication of common fractions</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>intro to multiplication of algebraic fractions</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>multiplication of algebraic fractions</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>division of algebraic fractions</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>addition of algebraic fractions</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>intro to addition of algebraic fractions</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 <section id="exploring-log-data" class="level2">
 <h2 class="anchored" data-anchor-id="exploring-log-data">Exploring log data</h2>
-<div id="2d38c518" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># loading data</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">'instructional-trajectory-session-24-results.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="2d38c518" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># loading data</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">'instructional-trajectory-session-24-results.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p><strong>Python library to consider for bayesian analysis</strong></p>
 <ol type="1">
@@ -174,10 +193,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Pgmpy</li>
 <li>Bnlearn</li>
 <li>PyBn</li>
+<li>PyCID</li>
+<li>PyAgrum</li>
 </ol>
-<div id="cfb39569" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>data.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="2">
+<div id="cfb39569" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>data.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="11">
 <div>
 <div>
 
@@ -343,132 +364,860 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="preprocessing-data" class="level2">
 <h2 class="anchored" data-anchor-id="preprocessing-data">Preprocessing data</h2>
 <p>We will convert data from current format to another format having each interaction of student as a seperate record.</p>
-<div id="5d1820b9" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> {<span class="dv">0</span>:<span class="st">'required'</span>,<span class="dv">1</span>:<span class="st">'time'</span>,<span class="dv">2</span>:<span class="st">'attempts'</span>,<span class="dv">3</span>:<span class="st">'hints'</span>,<span class="dv">4</span>:<span class="st">'success'</span>,<span class="dv">5</span>:<span class="st">'score'</span>,<span class="dv">6</span>:<span class="st">'answer'</span>,<span class="dv">7</span>:<span class="st">'---'</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="5d1820b9" class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> {<span class="dv">0</span>:<span class="st">'required'</span>,<span class="dv">1</span>:<span class="st">'time'</span>,<span class="dv">2</span>:<span class="st">'attempts'</span>,<span class="dv">3</span>:<span class="st">'hints'</span>,<span class="dv">4</span>:<span class="st">'success'</span>,<span class="dv">5</span>:<span class="st">'score'</span>,<span class="dv">6</span>:<span class="st">'answer'</span>,<span class="dv">7</span>:<span class="st">'---'</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="9b02d083" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> extract_data(row_data):</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">""" This function process records from log data obtained from vara on instructional trajectories.</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">        row_data (dict): row record in dictionary format</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">        records : a dictionary containing processed records</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    current_episode <span class="op">=</span> <span class="st">''</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    current_activity <span class="op">=</span> <span class="st">''</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    current_task <span class="op">=</span> <span class="st">''</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    records <span class="op">=</span> {}</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> item <span class="kw">in</span> row_data:</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        current_record <span class="op">=</span> {}</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        item <span class="op">=</span> <span class="bu">str</span>(item)</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="st">'E'</span> <span class="kw">in</span> item <span class="kw">and</span> <span class="st">'H5P'</span> <span class="kw">not</span> <span class="kw">in</span> item:</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>            current_episode <span class="op">=</span> item</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> <span class="st">'A'</span> <span class="kw">in</span> item <span class="kw">and</span> <span class="st">'H5P'</span> <span class="kw">not</span> <span class="kw">in</span> item:</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>            current_activity <span class="op">=</span> item</span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> <span class="st">'T'</span> <span class="kw">in</span> item <span class="kw">and</span> <span class="st">'H5P'</span> <span class="kw">not</span> <span class="kw">in</span> item:</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>            current_task <span class="op">=</span> item</span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>            start <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> <span class="st">'H5P'</span> <span class="kw">in</span> item <span class="kw">or</span> <span class="st">'library'</span> <span class="kw">in</span> item <span class="kw">or</span> <span class="st">':'</span> <span class="kw">in</span> item:</span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
-<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
-<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> current_episode <span class="op">==</span> <span class="st">''</span> <span class="kw">or</span> current_activity <span class="op">==</span> <span class="st">''</span> <span class="kw">or</span> current_task <span class="op">==</span> <span class="st">''</span>:</span>
-<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>                <span class="cf">continue</span></span>
-<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="kw">not</span> start <span class="op">&gt;</span><span class="dv">6</span>:</span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>                    records[<span class="ss">f'</span><span class="sc">{</span>current_episode<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>current_activity<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>current_task<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>labels[start]<span class="sc">}</span><span class="ss">'</span>]  <span class="op">=</span> item</span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>                start <span class="op">+=</span> <span class="dv">1</span></span>
-<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>                </span>
-<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>    save_records <span class="op">=</span> {} </span>
-<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>    processed_record <span class="op">=</span> records</span>
-<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> key, value <span class="kw">in</span> processed_record.items():</span>
-<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>        parts <span class="op">=</span> key.split(<span class="st">'_'</span>)</span>
-<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>        heirarchy <span class="op">=</span> <span class="st">'_'</span>.join(parts[:<span class="dv">3</span>])</span>
-<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> heirarchy <span class="kw">not</span> <span class="kw">in</span> save_records.keys():</span>
-<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>            save_records[heirarchy] <span class="op">=</span> {}</span>
-<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>        save_records[heirarchy][parts[<span class="dv">3</span>]] <span class="op">=</span> value</span>
-<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> save_records</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div id="4777149e" class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_df(data):</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""This function transforms current csv file into a pandas DataFrame.</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">    The dataframe contains response to each task as a seperate entry.</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">        data (DataFrame): Pandas DataFrame of csv file of instructional trajectories logs</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">        df (DataFrame): Processed dataframe</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    cols <span class="op">=</span> [<span class="st">'student'</span>,</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>             <span class="st">'task_heirarchy'</span>,</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>             <span class="st">'required'</span>,</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>             <span class="st">'time'</span>,</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>             <span class="st">'attempts'</span>,</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>             <span class="st">'hints'</span>,</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>             <span class="st">'success'</span>,</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>             <span class="st">'score'</span>]</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># initialise the dataframe</span></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.DataFrame(columns<span class="op">=</span>cols)</span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># iterate over each record in data</span></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> index <span class="kw">in</span> data.index.to_list():</span>
+<div id="9b02d083" class="cell" data-execution_count="62">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> extract_data(row_data):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">""" This function process records from log data obtained from vara on instructional trajectories.</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">        row_data (dict): row record in dictionary format</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">        records : a dictionary containing processed records</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    current_episode <span class="op">=</span> <span class="st">''</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    current_activity <span class="op">=</span> <span class="st">''</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    current_task <span class="op">=</span> <span class="st">''</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    records <span class="op">=</span> {}</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> item <span class="kw">in</span> row_data:</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        current_record <span class="op">=</span> {}</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>        item <span class="op">=</span> <span class="bu">str</span>(item)</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a> </span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="st">'E'</span> <span class="kw">in</span> item <span class="kw">and</span> <span class="st">'H5P'</span> <span class="kw">not</span> <span class="kw">in</span> item:</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>            current_episode <span class="op">=</span> item</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>            current_activity <span class="op">=</span> <span class="st">''</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>            current_task <span class="op">=</span> <span class="st">''</span></span>
 <span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>        <span class="co"># accessing current record in dict form</span></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>        cur_record <span class="op">=</span> data.iloc[index].to_dict()</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># dict for processed record</span></span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>        save_record <span class="op">=</span> {}</span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>        <span class="co"># studen information</span></span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>        save_record[<span class="st">'student'</span>] <span class="op">=</span> cur_record[<span class="st">'Student'</span>]</span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>        <span class="co"># convert each record into task-wise records</span></span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>        processed_records <span class="op">=</span> extract_data(data.iloc[index])</span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>        <span class="co"># iterate for each task</span></span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> task, values <span class="kw">in</span> processed_records.items():</span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>            save_record[<span class="st">'task_heirarchy'</span>] <span class="op">=</span> task</span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> val_key, val_val <span class="kw">in</span> values.items():</span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>                save_record[val_key] <span class="op">=</span> val_val</span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>            <span class="co"># save a record of students' response to each task seperately</span></span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>            df <span class="op">=</span> pd.concat([df, pd.DataFrame([save_record])], ignore_index<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>            </span>
-<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> <span class="st">'A'</span> <span class="kw">in</span> item <span class="kw">and</span> <span class="st">'H5P'</span> <span class="kw">not</span> <span class="kw">in</span> item:</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>            current_activity <span class="op">=</span> item</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>            current_task<span class="op">=</span><span class="st">''</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> <span class="st">'T'</span> <span class="kw">in</span> item <span class="kw">and</span> <span class="st">'H5P'</span> <span class="kw">not</span> <span class="kw">in</span> item:</span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>            current_task <span class="op">=</span> item</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>            start <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> <span class="st">'H5P'</span> <span class="kw">in</span> item <span class="kw">or</span> <span class="st">'library'</span> <span class="kw">in</span> item <span class="kw">or</span> <span class="st">':'</span> <span class="kw">in</span> item:</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> current_episode <span class="op">==</span> <span class="st">''</span> <span class="kw">or</span> current_activity <span class="op">==</span> <span class="st">''</span> <span class="kw">or</span> current_task <span class="op">==</span> <span class="st">''</span>:</span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>                <span class="cf">continue</span></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="kw">not</span> start <span class="op">&gt;</span><span class="dv">6</span>:</span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>                    records[<span class="ss">f'</span><span class="sc">{</span>current_episode<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>current_activity<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>current_task<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>labels[start]<span class="sc">}</span><span class="ss">'</span>]  <span class="op">=</span> item</span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>                start <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>    save_records <span class="op">=</span> {} </span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>    processed_record <span class="op">=</span> records</span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> key, value <span class="kw">in</span> processed_record.items():</span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>        parts <span class="op">=</span> key.split(<span class="st">'_'</span>)</span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>        heirarchy <span class="op">=</span> <span class="st">'_'</span>.join(parts[:<span class="dv">3</span>])</span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> heirarchy <span class="kw">not</span> <span class="kw">in</span> save_records.keys():</span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a>            save_records[heirarchy] <span class="op">=</span> {}</span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>        save_records[heirarchy][parts[<span class="dv">3</span>]] <span class="op">=</span> value</span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> save_records</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="88cc8a06" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'hints'</span>].unique()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="11">
+<div id="9c609187" class="cell" data-execution_count="63">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>extract_data(data.iloc[<span class="dv">1</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="63">
+<pre><code>{'E1_A1_T1': {'required': 'Yes',
+  'time': '228.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'No',
+  'score': '3/4'},
+ 'E1_A1_T2': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E1_A2_T1': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E1_A2_T2': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E1_A2_T3': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E1_A3_T1': {'required': 'Yes',
+  'time': '20.0',
+  'attempts': '3',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '3/3'},
+ 'E1_A3_T2': {'required': 'No',
+  'time': '49.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '3/3'},
+ 'E1_A3_T3': {'required': 'No',
+  'time': '36.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '3/3'},
+ 'E2_A1_T1': {'required': 'Yes',
+  'time': '76.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '1/1'},
+ 'E2_A2_T1': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E2_A2_T2': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E2_A2_T3': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E2_A3_T1': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E2_A3_T2': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E2_A3_T3': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E3_A1_T1': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E3_A1_T2': {'required': 'Yes',
+  'time': '83.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '1/1'},
+ 'E3_A1_T3': {'required': 'Yes',
+  'time': '899.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '17/17',
+  'answer': 'nan'},
+ 'E3_A2_T1': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E3_A2_T2': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E3_A2_T3': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E3_A3_T1': {'required': 'Yes',
+  'time': '53',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '2/2',
+  'answer': 'nan'},
+ 'E3_A3_T2': {'required': 'No',
+  'time': '70.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '2/2',
+  'answer': 'nan'},
+ 'E3_A3_T3': {'required': 'No',
+  'time': '67.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '2/2',
+  'answer': 'nan'},
+ 'E4_A1_T1': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E4_A1_T2': {'required': 'Yes',
+  'time': '2520.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'No',
+  'score': '19/20',
+  'answer': 'nan'},
+ 'E5_A1_T1': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E5_A1_T2': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E5_A1_T3': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E5_A2_T1': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E5_A2_T2': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E5_A2_T3': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E5_A3_T1': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E5_A3_T2': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E5_A3_T3': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E6_A1_T1': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E6_A1_T2': {'required': 'Yes',
+  'time': '509.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'No',
+  'score': '6/10',
+  'answer': 'nan'},
+ 'E6_A1_T3': {'required': 'Yes',
+  'time': '21.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '1/1'},
+ 'E6_A1_T4': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E7_A1_T1': {'required': 'Yes',
+  'time': '33.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '3/3'},
+ 'E7_A1_T2': {'required': 'Yes',
+  'time': '46.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '4/4'},
+ 'E7_A1_T3': {'required': 'Yes',
+  'time': '101.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '4/4'},
+ 'E7_A2_T1': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E7_A2_T2': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E8_A1_T1': {'required': 'Yes',
+  'time': '36.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '4/4',
+  'answer': 'nan'},
+ 'E8_A1_T2': {'required': 'Yes',
+  'time': '285.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '21/21',
+  'answer': 'nan'},
+ 'E8_A1_T3': {'required': 'Yes',
+  'time': '248.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '4/4',
+  'answer': 'nan'},
+ 'E8_A1_T4': {'required': 'No',
+  'time': '128.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '4/4',
+  'answer': 'nan'},
+ 'E8_A1_T5': {'required': 'No',
+  'time': '150.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '4/4',
+  'answer': 'nan'},
+ 'E8_A2_T1': {'required': 'Yes',
+  'time': '33.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'No',
+  'score': '1/3'},
+ 'E8_A2_T2': {'required': 'Yes',
+  'time': '174.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '8/8',
+  'answer': 'nan'},
+ 'E8_A2_T3': {'required': 'Yes',
+  'time': '430.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '6/6',
+  'answer': 'nan'},
+ 'E8_A2_T4': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E8_A3_T1': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E8_A3_T2': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E8_A3_T3': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E9_A1_T1': {'required': 'Yes',
+  'time': '1908.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '3/3',
+  'answer': 'nan'},
+ 'E9_A1_T2': {'required': 'Yes',
+  'time': '95.0',
+  'attempts': '3',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '5/5'},
+ 'E9_A1_T3': {'required': 'No',
+  'time': '128.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '6/6'},
+ 'E9_A1_T4': {'required': 'Yes',
+  'time': '172.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '9/9',
+  'answer': 'nan'},
+ 'E9_A1_T5': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E9_A1_T6': {'required': 'Yes',
+  'time': '100.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '6/6'},
+ 'E9_A2_T1': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E9_A2_T2': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E9_A2_T3': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E9_A3_T1': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E9_A3_T2': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E9_A3_T3': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E9_A3_T4': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E9_A3_T5': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E9_A3_T6': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E9_A3_T7': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E10_A1_T1': {'required': 'Yes',
+  'time': '20.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '1/1',
+  'answer': 'nan'},
+ 'E10_A1_T2': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E10_A1_T3': {'required': 'Yes',
+  'time': '73.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '5/5'},
+ 'E10_A1_T4': {'required': 'No',
+  'time': '153.0',
+  'attempts': '4',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '6/6'},
+ 'E10_A1_T5': {'required': 'Yes',
+  'time': '111.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'No',
+  'score': '3/4'},
+ 'E10_A1_T6': {'required': 'No',
+  'time': '45.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '4/4'},
+ 'E10_A1_T7': {'required': 'No',
+  'time': '29.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '4/4'},
+ 'E10_A1_T8': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E10_A1_T9': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E10_A1_T10': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E10_A1_T11': {'required': 'Yes',
+  'time': '199.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '6/6',
+  'answer': 'nan'},
+ 'E11_A1_T1': {'required': 'Yes',
+  'time': '294.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '3/3',
+  'answer': 'nan'},
+ 'E11_A1_T2': {'required': 'No',
+  'time': '133.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '3/3',
+  'answer': 'nan'},
+ 'E11_A1_T3': {'required': 'No',
+  'time': '244.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '3/3',
+  'answer': 'nan'},
+ 'E11_A2_T1': {'required': 'Yes',
+  'time': '256.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '3/3',
+  'answer': 'nan'},
+ 'E11_A2_T2': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E11_A2_T3': {'required': 'No',
+  'time': '147.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '4/4',
+  'answer': 'nan'},
+ 'E11_A2_T4': {'required': 'Yes',
+  'time': '1379.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '8/8',
+  'answer': 'nan'},
+ 'E12_A1_T1': {'required': 'Yes',
+  'time': '98.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '8/8',
+  'answer': 'nan'},
+ 'E12_A1_T2': {'required': 'Yes',
+  'time': '132.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '4/4',
+  'answer': 'nan'},
+ 'E12_A1_T3': {'required': 'No',
+  'time': '162.0',
+  'attempts': '4',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '4/4',
+  'answer': 'nan'},
+ 'E12_A1_T4': {'required': 'No',
+  'time': '209.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '4/4',
+  'answer': 'nan'},
+ 'E12_A1_T5': {'required': 'Yes',
+  'time': '581.0',
+  'attempts': '5',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '4/4',
+  'answer': 'nan'},
+ 'E12_A1_T6': {'required': 'No',
+  'time': '137.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '4/4',
+  'answer': 'nan'},
+ 'E12_A1_T7': {'required': 'No',
+  'time': '305.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '3/3',
+  'answer': 'nan'},
+ 'E12_A2_T1': {'required': 'Yes',
+  'time': '131.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '4/4',
+  'answer': 'nan'},
+ 'E12_A2_T2': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E12_A2_T3': {'required': 'No',
+  'time': '127.0',
+  'attempts': '1',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '3/3',
+  'answer': 'nan'},
+ 'E12_A3_T1': {'required': 'Yes',
+  'time': '62.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '4/4',
+  'answer': 'nan'},
+ 'E12_A3_T2': {'required': 'No',
+  'time': '186.0',
+  'attempts': '2',
+  'hints': '0',
+  'success': 'Yes',
+  'score': '4/4',
+  'answer': 'nan'},
+ 'E12_A3_T3': {'required': 'No',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E12_A3_T4': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'},
+ 'E12_A3_T5': {'required': 'Yes',
+  'time': 'nan',
+  'attempts': '0',
+  'hints': '0',
+  'success': 'No',
+  'score': 'nan',
+  'answer': 'nan'}}</code></pre>
+</div>
+</div>
+<div id="4777149e" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_df(data):</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""This function transforms current csv file into a pandas DataFrame.</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">    The dataframe contains response to each task as a seperate entry.</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">        data (DataFrame): Pandas DataFrame of csv file of instructional trajectories logs</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">        df (DataFrame): Processed dataframe</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>    cols <span class="op">=</span> [<span class="st">'student'</span>,</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>             <span class="st">'task_heirarchy'</span>,</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>             <span class="st">'required'</span>,</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>             <span class="st">'time'</span>,</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>             <span class="st">'attempts'</span>,</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>             <span class="st">'hints'</span>,</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>             <span class="st">'success'</span>,</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>             <span class="st">'score'</span>]</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>    <span class="co"># initialise the dataframe</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.DataFrame(columns<span class="op">=</span>cols)</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># iterate over each record in data</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> index <span class="kw">in</span> data.index.to_list():</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>        <span class="co"># accessing current record in dict form</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>        cur_record <span class="op">=</span> data.iloc[index].to_dict()</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># dict for processed record</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>        save_record <span class="op">=</span> {}</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>        <span class="co"># studen information</span></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>        save_record[<span class="st">'student'</span>] <span class="op">=</span> cur_record[<span class="st">'Student'</span>]</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>        <span class="co"># convert each record into task-wise records</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>        processed_records <span class="op">=</span> extract_data(data.iloc[index])</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>        <span class="co"># iterate for each task</span></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> task, values <span class="kw">in</span> processed_records.items():</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>            save_record[<span class="st">'task_heirarchy'</span>] <span class="op">=</span> task</span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> val_key, val_val <span class="kw">in</span> values.items():</span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>                save_record[val_key] <span class="op">=</span> val_val</span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>            <span class="co"># save a record of students' response to each task seperately</span></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>            df <span class="op">=</span> pd.concat([df, pd.DataFrame([save_record])], ignore_index<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="88cc8a06" class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'hints'</span>].unique()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
 <pre><code>array(['0'], dtype=object)</code></pre>
 </div>
 </div>
-<div id="26b47b0b" class="cell" data-execution_count="16">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> get_df(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="26b47b0b" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> get_df(data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="c464366f" class="cell" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'time'</span>] <span class="op">=</span> pd.to_numeric(df[<span class="st">'time'</span>],errors<span class="op">=</span><span class="st">'coerce'</span>)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'hints'</span>] <span class="op">=</span> pd.to_numeric(df[<span class="st">'hints'</span>],errors<span class="op">=</span><span class="st">'coerce'</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'attempts'</span>] <span class="op">=</span> pd.to_numeric(df[<span class="st">'attempts'</span>],errors<span class="op">=</span><span class="st">'coerce'</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>df_ <span class="op">=</span> df.drop([<span class="st">'hints'</span>,<span class="st">'answer'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>df_.tail(<span class="dv">30</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="17">
+<div id="c464366f" class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'time'</span>] <span class="op">=</span> pd.to_numeric(df[<span class="st">'time'</span>],errors<span class="op">=</span><span class="st">'coerce'</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'hints'</span>] <span class="op">=</span> pd.to_numeric(df[<span class="st">'hints'</span>],errors<span class="op">=</span><span class="st">'coerce'</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'attempts'</span>] <span class="op">=</span> pd.to_numeric(df[<span class="st">'attempts'</span>],errors<span class="op">=</span><span class="st">'coerce'</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># no student used hints, therefore, removing it</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>df_ <span class="op">=</span> df.drop([<span class="st">'hints'</span>,<span class="st">'answer'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>df_.tail(<span class="dv">106</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="20">
 <div>
 <div>
 
@@ -488,219 +1237,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2518</td>
+<td data-quarto-table-cell-role="th">2442</td>
 <td>Peetri kooli kasutaja 78</td>
-<td>E10_A1_T4</td>
-<td>No</td>
-<td>77.0</td>
-<td>1</td>
+<td>E1_A1_T1</td>
 <td>Yes</td>
-<td>6/6</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">2519</td>
-<td>Peetri kooli kasutaja 78</td>
-<td>E10_A1_T5</td>
-<td>Yes</td>
-<td>8.0</td>
-<td>1</td>
-<td>Yes</td>
-<td>4/4</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">2520</td>
-<td>Peetri kooli kasutaja 78</td>
-<td>E10_A1_T6</td>
-<td>No</td>
-<td>7.0</td>
-<td>2</td>
-<td>Yes</td>
-<td>4/4</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">2521</td>
-<td>Peetri kooli kasutaja 78</td>
-<td>E10_A1_T7</td>
-<td>No</td>
-<td>19.0</td>
+<td>15.0</td>
 <td>3</td>
-<td>Yes</td>
-<td>4/4</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">2522</td>
-<td>Peetri kooli kasutaja 78</td>
-<td>E10_A1_T8</td>
-<td>Yes</td>
-<td>156.0</td>
-<td>2</td>
-<td>Yes</td>
-<td>4/4</td>
+<td>No</td>
+<td>0/4</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">2523</td>
+<td data-quarto-table-cell-role="th">2443</td>
 <td>Peetri kooli kasutaja 78</td>
-<td>E10_A1_T9</td>
-<td>No</td>
-<td>124.0</td>
-<td>1</td>
-<td>Yes</td>
-<td>4/4</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">2524</td>
-<td>Peetri kooli kasutaja 78</td>
-<td>E10_A1_T10</td>
-<td>No</td>
-<td>126.0</td>
-<td>7</td>
-<td>Yes</td>
-<td>4/4</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">2525</td>
-<td>Peetri kooli kasutaja 78</td>
-<td>E10_A1_T11</td>
-<td>Yes</td>
-<td>121.0</td>
-<td>5</td>
-<td>Yes</td>
-<td>6/6</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">2526</td>
-<td>Peetri kooli kasutaja 78</td>
-<td>E11_A1_T1</td>
-<td>Yes</td>
-<td>30.0</td>
-<td>4</td>
-<td>Yes</td>
-<td>3/3</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">2527</td>
-<td>Peetri kooli kasutaja 78</td>
-<td>E11_A1_T2</td>
-<td>No</td>
-<td>23.0</td>
-<td>5</td>
-<td>Yes</td>
-<td>3/3</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">2528</td>
-<td>Peetri kooli kasutaja 78</td>
-<td>E11_A1_T3</td>
-<td>No</td>
-<td>27.0</td>
-<td>2</td>
-<td>Yes</td>
-<td>3/3</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">2529</td>
-<td>Peetri kooli kasutaja 78</td>
-<td>E11_A2_T1</td>
-<td>Yes</td>
-<td>73.0</td>
-<td>2</td>
-<td>Yes</td>
-<td>3/3</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">2530</td>
-<td>Peetri kooli kasutaja 78</td>
-<td>E11_A2_T2</td>
-<td>No</td>
-<td>80.0</td>
-<td>5</td>
-<td>Yes</td>
-<td>4/4</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">2531</td>
-<td>Peetri kooli kasutaja 78</td>
-<td>E11_A2_T3</td>
-<td>No</td>
-<td>67.0</td>
-<td>5</td>
-<td>Yes</td>
-<td>4/4</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">2532</td>
-<td>Peetri kooli kasutaja 78</td>
-<td>E11_A2_T4</td>
-<td>Yes</td>
-<td>229.0</td>
-<td>3</td>
-<td>Yes</td>
-<td>8/8</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">2533</td>
-<td>Peetri kooli kasutaja 78</td>
-<td>E12_A1_T1</td>
-<td>Yes</td>
-<td>286.0</td>
-<td>3</td>
-<td>Yes</td>
-<td>8/8</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">2534</td>
-<td>Peetri kooli kasutaja 78</td>
-<td>E12_A1_T2</td>
-<td>Yes</td>
-<td>236.0</td>
-<td>7</td>
-<td>Yes</td>
-<td>4/4</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">2535</td>
-<td>Peetri kooli kasutaja 78</td>
-<td>E12_A1_T3</td>
-<td>No</td>
-<td>466.0</td>
-<td>6</td>
-<td>Yes</td>
-<td>4/4</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">2536</td>
-<td>Peetri kooli kasutaja 78</td>
-<td>E12_A1_T4</td>
-<td>No</td>
-<td>649.0</td>
-<td>17</td>
-<td>Yes</td>
-<td>4/4</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">2537</td>
-<td>Peetri kooli kasutaja 78</td>
-<td>E12_A1_T5</td>
-<td>Yes</td>
-<td>180.0</td>
-<td>1</td>
-<td>Yes</td>
-<td>4/4</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">2538</td>
-<td>Peetri kooli kasutaja 78</td>
-<td>E12_A1_T6</td>
-<td>No</td>
-<td>343.0</td>
-<td>5</td>
-<td>Yes</td>
-<td>4/4</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">2539</td>
-<td>Peetri kooli kasutaja 78</td>
-<td>E12_A1_T7</td>
+<td>E1_A1_T2</td>
 <td>No</td>
 <td>NaN</td>
 <td>0</td>
@@ -708,9 +1257,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>nan</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2540</td>
+<td data-quarto-table-cell-role="th">2444</td>
 <td>Peetri kooli kasutaja 78</td>
-<td>E12_A2_T1</td>
+<td>E1_A2_T1</td>
 <td>Yes</td>
 <td>NaN</td>
 <td>0</td>
@@ -718,19 +1267,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>nan</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">2541</td>
+<td data-quarto-table-cell-role="th">2445</td>
 <td>Peetri kooli kasutaja 78</td>
-<td>E12_A2_T2</td>
-<td>Yes</td>
+<td>E1_A2_T2</td>
+<td>No</td>
 <td>NaN</td>
 <td>0</td>
 <td>No</td>
 <td>nan</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">2542</td>
+<td data-quarto-table-cell-role="th">2446</td>
 <td>Peetri kooli kasutaja 78</td>
-<td>E12_A2_T3</td>
+<td>E1_A2_T3</td>
 <td>No</td>
 <td>NaN</td>
 <td>0</td>
@@ -738,6 +1287,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>nan</td>
 </tr>
 <tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
 <td data-quarto-table-cell-role="th">2543</td>
 <td>Peetri kooli kasutaja 78</td>
 <td>E12_A3_T1</td>
@@ -747,7 +1306,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>No</td>
 <td>nan</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td data-quarto-table-cell-role="th">2544</td>
 <td>Peetri kooli kasutaja 78</td>
 <td>E12_A3_T2</td>
@@ -757,7 +1316,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>No</td>
 <td>nan</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td data-quarto-table-cell-role="th">2545</td>
 <td>Peetri kooli kasutaja 78</td>
 <td>E12_A3_T3</td>
@@ -767,7 +1326,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>No</td>
 <td>nan</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td data-quarto-table-cell-role="th">2546</td>
 <td>Peetri kooli kasutaja 78</td>
 <td>E12_A3_T4</td>
@@ -777,7 +1336,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td>No</td>
 <td>nan</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td data-quarto-table-cell-role="th">2547</td>
 <td>Peetri kooli kasutaja 78</td>
 <td>E12_A3_T5</td>
@@ -790,46 +1349,353 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 
+<p>106 rows × 7 columns</p>
 </div>
 </div>
+</div>
+</div>
+</section>
+<section id="setting-learning-outcomes-for-each-task" class="level2">
+<h2 class="anchored" data-anchor-id="setting-learning-outcomes-for-each-task">Setting learning outcomes for each task</h2>
+<div id="a9c7375a" class="cell" data-execution_count="41">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>skills_df <span class="op">=</span> pd.read_csv(<span class="st">'task_to_skill_mapping.csv'</span>)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_task_skill(df, task):</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co">        This function returns the learning outcome associated with the specified task.</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co">            df (DataFrame) : Pandas DataFrame object of logs data</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">            task (str)     : Task for which to return learning outcome</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">            </span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co">            str: learning outcome</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df.loc[df[<span class="st">'task_heirarchy'</span>] <span class="op">==</span> task, <span class="st">'learning_outcome'</span>].values[<span class="dv">0</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="1a66f95a" class="cell" data-execution_count="42">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>get_task_skill(skills_df, <span class="st">'E1_A1_T1'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="42">
+<pre><code>'understanding common fractions'</code></pre>
+</div>
+</div>
+<div id="1a5daaef" class="cell" data-execution_count="43">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>df_[<span class="st">'outcomes'</span>] <span class="op">=</span> <span class="st">''</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> task <span class="kw">in</span> df_[<span class="st">'task_heirarchy'</span>].unique():</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    skill <span class="op">=</span> get_task_skill(skills_df, task)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    df_.loc[df_[<span class="st">'task_heirarchy'</span>] <span class="op">==</span> task,<span class="st">'outcomes'</span>] <span class="op">=</span> skill</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="1ff2a619" class="cell" data-execution_count="44">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>df_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="44">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">student</th>
+<th data-quarto-table-cell-role="th">task_heirarchy</th>
+<th data-quarto-table-cell-role="th">required</th>
+<th data-quarto-table-cell-role="th">time</th>
+<th data-quarto-table-cell-role="th">attempts</th>
+<th data-quarto-table-cell-role="th">success</th>
+<th data-quarto-table-cell-role="th">score</th>
+<th data-quarto-table-cell-role="th">outcomes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Piret Koppel</td>
+<td>E1_A1_T1</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>0</td>
+<td>No</td>
+<td>nan</td>
+<td>understanding common fractions</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Piret Koppel</td>
+<td>E1_A1_T2</td>
+<td>No</td>
+<td>NaN</td>
+<td>0</td>
+<td>No</td>
+<td>nan</td>
+<td>understanding common fractions</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Piret Koppel</td>
+<td>E1_A2_T1</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>0</td>
+<td>No</td>
+<td>nan</td>
+<td>understanding common fractions</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>Piret Koppel</td>
+<td>E1_A2_T2</td>
+<td>No</td>
+<td>NaN</td>
+<td>0</td>
+<td>No</td>
+<td>nan</td>
+<td>understanding common fractions</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>Piret Koppel</td>
+<td>E1_A2_T3</td>
+<td>No</td>
+<td>NaN</td>
+<td>0</td>
+<td>No</td>
+<td>nan</td>
+<td>understanding common fractions</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2543</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E12_A3_T1</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>0</td>
+<td>No</td>
+<td>nan</td>
+<td>addition of algebraic fractions</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2544</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E12_A3_T2</td>
+<td>No</td>
+<td>NaN</td>
+<td>0</td>
+<td>No</td>
+<td>nan</td>
+<td>addition of algebraic fractions</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2545</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E12_A3_T3</td>
+<td>No</td>
+<td>NaN</td>
+<td>0</td>
+<td>No</td>
+<td>nan</td>
+<td>addition of algebraic fractions</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">2546</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E12_A3_T4</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>0</td>
+<td>No</td>
+<td>nan</td>
+<td>addition of algebraic fractions</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2547</td>
+<td>Peetri kooli kasutaja 78</td>
+<td>E12_A3_T5</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>0</td>
+<td>No</td>
+<td>nan</td>
+<td>addition of algebraic fractions</td>
+</tr>
+</tbody>
+</table>
+
+<p>2548 rows × 8 columns</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="converting-attributes-values-into-categories" class="level2">
+<h2 class="anchored" data-anchor-id="converting-attributes-values-into-categories">Converting attributes’ values into categories</h2>
+<div id="7fc798ab" class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> task <span class="kw">in</span> df_[<span class="st">'task_heirarchy'</span>].unique():</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    tmp_ <span class="op">=</span> df_.loc[df_[<span class="st">'task_heirarchy'</span>] <span class="op">==</span> task, [<span class="st">'time'</span>]]</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    tmp_mean <span class="op">=</span> tmp_[<span class="st">'time'</span>].median()</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Task </span><span class="sc">{</span>task<span class="sc">}</span><span class="ss"> Average time </span><span class="sc">{</span>tmp_mean<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Task E1_A1_T1 Average time 92.0
+Task E1_A1_T2 Average time nan
+Task E1_A2_T1 Average time 9.5
+Task E1_A2_T2 Average time 8.0
+Task E1_A2_T3 Average time 11.0
+Task E1_A3_T1 Average time 73.5
+Task E1_A3_T2 Average time 20.5
+Task E1_A3_T3 Average time 42.0
+Task E2_A1_T1 Average time 35.0
+Task E2_A2_T1 Average time 79.0
+Task E2_A2_T2 Average time nan
+Task E2_A2_T3 Average time nan
+Task E2_A3_T1 Average time 17.0
+Task E2_A3_T2 Average time 17.0
+Task E2_A3_T3 Average time 17.0
+Task E3_A1_T1 Average time nan
+Task E3_A1_T2 Average time 68.0
+Task E3_A1_T3 Average time 833.5
+Task E3_A2_T1 Average time 120.5
+Task E3_A2_T2 Average time 13.0
+Task E3_A2_T3 Average time nan
+Task E3_A3_T1 Average time 61.0
+Task E3_A3_T2 Average time 59.0
+Task E3_A3_T3 Average time 76.5
+Task E4_A1_T1 Average time nan
+Task E4_A1_T2 Average time 2520.0
+Task E5_A1_T1 Average time 198.0
+Task E5_A1_T2 Average time 43.5
+Task E5_A1_T3 Average time 97.0
+Task E5_A2_T1 Average time 220.0
+Task E5_A2_T2 Average time 77.0
+Task E5_A2_T3 Average time 90.0
+Task E5_A3_T1 Average time nan
+Task E5_A3_T2 Average time nan
+Task E5_A3_T3 Average time nan
+Task E6_A1_T1 Average time 540.0
+Task E6_A1_T2 Average time 298.5
+Task E6_A1_T3 Average time 20.0
+Task E6_A1_T4 Average time 185.0
+Task E7_A1_T1 Average time 43.0
+Task E7_A1_T2 Average time 55.0
+Task E7_A1_T3 Average time 128.0
+Task E7_A2_T1 Average time 70.0
+Task E7_A2_T2 Average time 281.5
+Task E8_A1_T1 Average time 10.0
+Task E8_A1_T2 Average time 408.0
+Task E8_A1_T3 Average time 248.0
+Task E8_A1_T4 Average time 206.5
+Task E8_A1_T5 Average time 390.0
+Task E8_A2_T1 Average time 10.0
+Task E8_A2_T2 Average time 174.0
+Task E8_A2_T3 Average time 381.5
+Task E8_A2_T4 Average time 179.0
+Task E8_A3_T1 Average time 268.0
+Task E8_A3_T2 Average time 369.0
+Task E8_A3_T3 Average time 164.0
+Task E9_A1_T1 Average time 131.0
+Task E9_A1_T2 Average time 41.0
+Task E9_A1_T3 Average time 128.0
+Task E9_A1_T4 Average time 132.0
+Task E9_A1_T5 Average time nan
+Task E9_A1_T6 Average time 100.0
+Task E9_A2_T1 Average time 271.0
+Task E9_A2_T2 Average time nan
+Task E9_A2_T3 Average time nan
+Task E9_A3_T1 Average time nan
+Task E9_A3_T2 Average time nan
+Task E9_A3_T3 Average time nan
+Task E9_A3_T4 Average time nan
+Task E9_A3_T5 Average time nan
+Task E9_A3_T6 Average time nan
+Task E9_A3_T7 Average time nan
+Task E10_A1_T1 Average time 13.0
+Task E10_A1_T2 Average time 734.0
+Task E10_A1_T3 Average time 73.0
+Task E10_A1_T4 Average time 55.0
+Task E10_A1_T5 Average time 96.0
+Task E10_A1_T6 Average time 46.5
+Task E10_A1_T7 Average time 37.0
+Task E10_A1_T8 Average time 90.5
+Task E10_A1_T9 Average time 62.0
+Task E10_A1_T10 Average time 65.0
+Task E10_A1_T11 Average time 126.0
+Task E11_A1_T1 Average time 147.0
+Task E11_A1_T2 Average time 123.0
+Task E11_A1_T3 Average time 136.0
+Task E11_A2_T1 Average time 178.5
+Task E11_A2_T2 Average time 136.5
+Task E11_A2_T3 Average time 136.0
+Task E11_A2_T4 Average time 229.0
+Task E12_A1_T1 Average time 179.5
+Task E12_A1_T2 Average time 141.0
+Task E12_A1_T3 Average time 155.0
+Task E12_A1_T4 Average time 228.0
+Task E12_A1_T5 Average time 189.5
+Task E12_A1_T6 Average time 248.0
+Task E12_A1_T7 Average time 272.0
+Task E12_A2_T1 Average time 124.5
+Task E12_A2_T2 Average time 395.5
+Task E12_A2_T3 Average time 206.0
+Task E12_A3_T1 Average time 102.0
+Task E12_A3_T2 Average time 168.0
+Task E12_A3_T3 Average time 93.5
+Task E12_A3_T4 Average time 342.0
+Task E12_A3_T5 Average time 194.0
+Task E2_A1_T3 Average time 42.0
+Task E7_A2_T3 Average time 128.0
+Task E9_A2_T6 Average time 100.0</code></pre>
 </div>
 </div>
 <div id="0a44e804" class="cell" data-execution_count="18">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Analyzing data for episode 11</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># df for episode 11</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>ep_df <span class="op">=</span> df_.loc[df_[<span class="st">'task_heirarchy'</span>].<span class="bu">str</span>.contains(<span class="st">'E11'</span>),:]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Analyzing data for episode 11</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="co"># df for episode 11</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>ep_df <span class="op">=</span> df_.loc[df_[<span class="st">'task_heirarchy'</span>].<span class="bu">str</span>.contains(<span class="st">'E11'</span>),:]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="5fc62ecf" class="cell" data-execution_count="20">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># df for student Peetri kooli kasutaja 78</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>ep_78 <span class="op">=</span> ep_df.loc[ep_df[<span class="st">'student'</span>] <span class="op">==</span> <span class="st">'Peetri kooli kasutaja 78'</span>,:]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># df for student Peetri kooli kasutaja 78</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>ep_78 <span class="op">=</span> ep_df.loc[ep_df[<span class="st">'student'</span>] <span class="op">==</span> <span class="st">'Peetri kooli kasutaja 78'</span>,:]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="e6349d6c" class="cell" data-execution_count="22">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>ep_78.to_csv(<span class="st">'ep_78.csv'</span>, index<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>ep_78.to_csv(<span class="st">'ep_78.csv'</span>, index<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="ca608c9d" class="cell" data-execution_count="24">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>ep_78_skills <span class="op">=</span> pd.read_csv(<span class="st">'ep_78_with_skills.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>ep_78_skills <span class="op">=</span> pd.read_csv(<span class="st">'ep_78_with_skills.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="87a0e1c8" class="cell" data-execution_count="28">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> score_to_num(x):</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> x <span class="kw">is</span> <span class="va">None</span>:</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="op">-</span><span class="dv">1</span></span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>        f <span class="op">=</span> x.split(<span class="st">'/'</span>)[<span class="dv">0</span>]</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>        s <span class="op">=</span> x.split(<span class="st">'/'</span>)[<span class="dv">1</span>]</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">float</span>(f)<span class="op">/</span><span class="bu">float</span>(s)</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>ep_78_skills[<span class="st">'score_'</span>] <span class="op">=</span>  ep_78_skills[<span class="st">'score'</span>].<span class="bu">apply</span>(score_to_num) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="87a0e1c8" class="cell" data-execution_count="46">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> score_to_num(x):</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> x <span class="kw">is</span> <span class="va">None</span>:</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="op">-</span><span class="dv">1</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> <span class="st">'/'</span> <span class="kw">in</span> x:</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>        f <span class="op">=</span> x.split(<span class="st">'/'</span>)[<span class="dv">0</span>]</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>        s <span class="op">=</span> x.split(<span class="st">'/'</span>)[<span class="dv">1</span>]</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">float</span>(f)<span class="op">/</span><span class="bu">float</span>(s)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="op">-</span><span class="dv">1</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>df_[<span class="st">'score_'</span>] <span class="op">=</span>  df_[<span class="st">'score'</span>].<span class="bu">apply</span>(score_to_num) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="eaf7f5dc" class="cell" data-execution_count="32">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>ep_78_skills_dummy <span class="op">=</span> pd.get_dummies(ep_78_skills[<span class="st">'skill'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="eaf7f5dc" class="cell" data-execution_count="49">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>df_dummy <span class="op">=</span> pd.get_dummies(df_[<span class="st">'outcomes'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="aa348ba1" class="cell" data-execution_count="33">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>final_ep_78 <span class="op">=</span> pd.concat([ep_78_skills[[<span class="st">'required'</span>,<span class="st">'time'</span>,<span class="st">'attempts'</span>,<span class="st">'score_'</span>]],ep_78_skills_dummy],axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="aa348ba1" class="cell" data-execution_count="54">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>final_ <span class="op">=</span> pd.concat([df_[[<span class="st">'required'</span>,<span class="st">'success'</span>,<span class="st">'attempts'</span>,<span class="st">'score_'</span>]],df_dummy],axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="ebae4a51" class="cell" data-execution_count="34">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>final_ep_78</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="34">
+<div id="ebae4a51" class="cell" data-execution_count="55">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>final_</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="55">
 <div>
 <div>
 
@@ -839,138 +1705,225 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
 <th data-quarto-table-cell-role="th">required</th>
-<th data-quarto-table-cell-role="th">time</th>
+<th data-quarto-table-cell-role="th">success</th>
 <th data-quarto-table-cell-role="th">attempts</th>
 <th data-quarto-table-cell-role="th">score_</th>
-<th data-quarto-table-cell-role="th">A</th>
-<th data-quarto-table-cell-role="th">B</th>
-<th data-quarto-table-cell-role="th">C</th>
+<th data-quarto-table-cell-role="th">addition of algebraic fractions</th>
+<th data-quarto-table-cell-role="th">bridging from multiplication of common farctions</th>
+<th data-quarto-table-cell-role="th">division of algerbaic fractions</th>
+<th data-quarto-table-cell-role="th">expanding and reducing algebraic fractions</th>
+<th data-quarto-table-cell-role="th">expanding and reducing common fractions</th>
+<th data-quarto-table-cell-role="th">intro to addition of algebraic fractions</th>
+<th data-quarto-table-cell-role="th">intro to expanding and reducing algebraic fractions</th>
+<th data-quarto-table-cell-role="th">intro to multiplication of algebraic farctions</th>
+<th data-quarto-table-cell-role="th">multiplication of algebraic fractions</th>
+<th data-quarto-table-cell-role="th">understanding algebraic fractions</th>
+<th data-quarto-table-cell-role="th">understanding common fractions</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">0</td>
 <td>Yes</td>
-<td>30.0</td>
-<td>4</td>
-<td>1.0</td>
+<td>No</td>
+<td>0</td>
+<td>-1.0</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
 <td>True</td>
-<td>False</td>
-<td>False</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">1</td>
-<td>Yes</td>
-<td>30.0</td>
-<td>4</td>
-<td>1.0</td>
+<td>No</td>
+<td>No</td>
+<td>0</td>
+<td>-1.0</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
 <td>False</td>
 <td>True</td>
-<td>False</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">2</td>
+<td>Yes</td>
 <td>No</td>
-<td>23.0</td>
-<td>5</td>
-<td>1.0</td>
+<td>0</td>
+<td>-1.0</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
 <td>False</td>
 <td>True</td>
-<td>False</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">3</td>
 <td>No</td>
-<td>27.0</td>
-<td>2</td>
-<td>1.0</td>
+<td>No</td>
+<td>0</td>
+<td>-1.0</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
 <td>True</td>
-<td>False</td>
-<td>False</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">4</td>
 <td>No</td>
-<td>27.0</td>
-<td>2</td>
-<td>1.0</td>
+<td>No</td>
+<td>0</td>
+<td>-1.0</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
 <td>False</td>
 <td>False</td>
 <td>True</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">5</td>
+<td data-quarto-table-cell-role="th">...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+<td>...</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2543</td>
 <td>Yes</td>
-<td>73.0</td>
-<td>2</td>
-<td>1.0</td>
-<td>False</td>
-<td>False</td>
-<td>True</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">6</td>
 <td>No</td>
-<td>80.0</td>
-<td>5</td>
-<td>1.0</td>
+<td>0</td>
+<td>-1.0</td>
 <td>True</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
 <td>False</td>
 <td>False</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">7</td>
+<td data-quarto-table-cell-role="th">2544</td>
 <td>No</td>
-<td>80.0</td>
-<td>5</td>
-<td>1.0</td>
-<td>False</td>
+<td>No</td>
+<td>0</td>
+<td>-1.0</td>
 <td>True</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
 <td>False</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">8</td>
+<td data-quarto-table-cell-role="th">2545</td>
 <td>No</td>
-<td>80.0</td>
-<td>5</td>
-<td>1.0</td>
-<td>False</td>
-<td>False</td>
+<td>No</td>
+<td>0</td>
+<td>-1.0</td>
 <td>True</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">9</td>
-<td>No</td>
-<td>67.0</td>
-<td>5</td>
-<td>1.0</td>
-<td>False</td>
-<td>True</td>
-<td>False</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">10</td>
+<td data-quarto-table-cell-role="th">2546</td>
 <td>Yes</td>
-<td>229.0</td>
-<td>3</td>
-<td>1.0</td>
-<td>False</td>
+<td>No</td>
+<td>0</td>
+<td>-1.0</td>
 <td>True</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
 <td>False</td>
 </tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">11</td>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2547</td>
 <td>Yes</td>
-<td>229.0</td>
-<td>3</td>
-<td>1.0</td>
-<td>False</td>
-<td>False</td>
+<td>No</td>
+<td>0</td>
+<td>-1.0</td>
 <td>True</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
+<td>False</td>
 </tr>
 </tbody>
 </table>
 
+<p>2548 rows × 15 columns</p>
 </div>
 </div>
 </div>
@@ -979,23 +1932,23 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="creating-bayesian-network" class="level1">
 <h1>Creating Bayesian Network</h1>
 <div id="82026763" class="cell" data-execution_count="51">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pgmpy.models <span class="im">import</span> BayesianNetwork</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> BayesianNetwork([(<span class="st">'A'</span>, <span class="st">'B'</span>),</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>                         (<span class="st">'A'</span>, <span class="st">'C'</span>),</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>                         (<span class="st">'B'</span>, <span class="st">'C'</span>),</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>                         (<span class="st">'A'</span>,<span class="st">'attempts'</span>),</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>                         (<span class="st">'attempts'</span>,<span class="st">'score_'</span>),</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>                         ])</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>model.fit(final_ep_78)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pgmpy.models <span class="im">import</span> BayesianNetwork</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> BayesianNetwork([(<span class="st">'A'</span>, <span class="st">'B'</span>),</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>                         (<span class="st">'A'</span>, <span class="st">'C'</span>),</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>                         (<span class="st">'B'</span>, <span class="st">'C'</span>),</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>                         (<span class="st">'A'</span>,<span class="st">'attempts'</span>),</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>                         (<span class="st">'attempts'</span>,<span class="st">'score_'</span>),</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>                         ])</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>model.fit(final_ep_78)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="93cfbe79" class="cell" data-execution_count="52">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>cpds <span class="op">=</span> model.get_cpds()</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> cpd <span class="kw">in</span> cpds:</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(cpd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>cpds <span class="op">=</span> model.get_cpds()</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> cpd <span class="kw">in</span> cpds:</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(cpd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>+----------+------+
 | A(False) | 0.75 |
@@ -1037,17 +1990,131 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <div id="3c8d409c" class="cell" data-execution_count="53">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pylab <span class="im">as</span> plt</span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>nx_graph <span class="op">=</span> nx.DiGraph(model.edges())</span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>nx.draw(nx_graph, with_labels<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pylab <span class="im">as</span> plt</span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>nx_graph <span class="op">=</span> nx.DiGraph(model.edges())</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>nx.draw(nx_graph, with_labels<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="Plotting open learner model using trajectories data_files/figure-html/cell-20-output-1.png" class="img-fluid figure-img"></p>
+<p><img src="Plotting open learner model using trajectories data_files/figure-html/cell-27-output-1.png" class="img-fluid figure-img"></p>
 </figure>
 </div>
+</div>
+</div>
+<div id="205f26fc" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span> pip install pyagrum</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Collecting pyagrum
+  Obtaining dependency information for pyagrum from https://files.pythonhosted.org/packages/61/a6/5ddf7838d6ed4b466111c906d28b6dbb3b8910e6e1230f09d2bf6b0725b4/pyAgrum-1.14.0-cp311-cp311-macosx_10_9_x86_64.whl.metadata
+  Downloading pyAgrum-1.14.0-cp311-cp311-macosx_10_9_x86_64.whl.metadata (4.1 kB)
+Requirement already satisfied: numpy in /Users/pankaj/anaconda3/lib/python3.11/site-packages (from pyagrum) (1.24.3)
+Requirement already satisfied: matplotlib in /Users/pankaj/anaconda3/lib/python3.11/site-packages (from pyagrum) (3.7.2)
+Collecting pydot (from pyagrum)
+  Obtaining dependency information for pydot from https://files.pythonhosted.org/packages/7f/90/c9b51f3cdff89cd8f93382060330f43d1af098a6624cff439e700791e922/pydot-2.0.0-py3-none-any.whl.metadata
+  Downloading pydot-2.0.0-py3-none-any.whl.metadata (9.6 kB)
+Requirement already satisfied: contourpy&gt;=1.0.1 in /Users/pankaj/anaconda3/lib/python3.11/site-packages (from matplotlib-&gt;pyagrum) (1.0.5)
+Requirement already satisfied: cycler&gt;=0.10 in /Users/pankaj/anaconda3/lib/python3.11/site-packages (from matplotlib-&gt;pyagrum) (0.11.0)
+Requirement already satisfied: fonttools&gt;=4.22.0 in /Users/pankaj/anaconda3/lib/python3.11/site-packages (from matplotlib-&gt;pyagrum) (4.25.0)
+Requirement already satisfied: kiwisolver&gt;=1.0.1 in /Users/pankaj/anaconda3/lib/python3.11/site-packages (from matplotlib-&gt;pyagrum) (1.4.4)
+Requirement already satisfied: packaging&gt;=20.0 in /Users/pankaj/anaconda3/lib/python3.11/site-packages (from matplotlib-&gt;pyagrum) (21.3)
+Requirement already satisfied: pillow&gt;=6.2.0 in /Users/pankaj/anaconda3/lib/python3.11/site-packages (from matplotlib-&gt;pyagrum) (9.4.0)
+Requirement already satisfied: pyparsing&lt;3.1,&gt;=2.3.1 in /Users/pankaj/anaconda3/lib/python3.11/site-packages (from matplotlib-&gt;pyagrum) (3.0.9)
+Requirement already satisfied: python-dateutil&gt;=2.7 in /Users/pankaj/anaconda3/lib/python3.11/site-packages (from matplotlib-&gt;pyagrum) (2.8.2)
+Requirement already satisfied: six&gt;=1.5 in /Users/pankaj/anaconda3/lib/python3.11/site-packages (from python-dateutil&gt;=2.7-&gt;matplotlib-&gt;pyagrum) (1.16.0)
+Downloading pyAgrum-1.14.0-cp311-cp311-macosx_10_9_x86_64.whl (4.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.8/4.8 MB 7.5 MB/s eta 0:00:0000:0100:01m
+Downloading pydot-2.0.0-py3-none-any.whl (22 kB)
+Installing collected packages: pydot, pyagrum
+Successfully installed pyagrum-1.14.0 pydot-2.0.0</code></pre>
+</div>
+</div>
+<div id="6a563795" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyAgrum <span class="im">as</span> gum</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyAgrum.lib.notebook <span class="im">as</span> gnb</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>bn<span class="op">=</span>gum.fastBN(<span class="st">"c-&gt;r-&gt;w&lt;-s&lt;-c"</span>)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>bn</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+<svg xmlns="http://www.w3.org/2000/svg" xlink="http://www.w3.org/1999/xlink" width="134pt" height="188pt" viewbox="0.00 0.00 134.00 188.00">
+<g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 184)">
+<title>G</title>
+<!-- r -->
+<g id="node1" class="node">
+<title>r</title>
+<g id="a_node1"><a title="(1) r">
+<ellipse fill="#404040" stroke="#4a4a4a" cx="27" cy="-90" rx="27" ry="18"></ellipse>
+<text text-anchor="middle" x="27" y="-84.95" font-family="Times,serif" font-size="14.00" fill="white">r</text>
+</a>
+</g>
+</g>
+<!-- w -->
+<g id="node3" class="node">
+<title>w</title>
+<g id="a_node3"><a title="(2) w">
+<ellipse fill="#404040" stroke="#4a4a4a" cx="63" cy="-18" rx="27" ry="18"></ellipse>
+<text text-anchor="middle" x="63" y="-12.95" font-family="Times,serif" font-size="14.00" fill="white">w</text>
+</a>
+</g>
+</g>
+<!-- r&#45;&gt;w -->
+<g id="edge2" class="edge">
+<title>r-&gt;w</title>
+<g id="a_edge2"><a title="1&nbsp;→&nbsp;2">
+<path fill="none" stroke="#4a4a4a" d="M35.35,-72.76C39.58,-64.55 44.81,-54.37 49.58,-45.09"></path>
+<polygon fill="#4a4a4a" stroke="#4a4a4a" points="52.54,-46.99 54,-36.49 46.32,-43.79 52.54,-46.99"></polygon>
+</a>
+</g>
+</g>
+<!-- c -->
+<g id="node2" class="node">
+<title>c</title>
+<g id="a_node2"><a title="(0) c">
+<ellipse fill="#404040" stroke="#4a4a4a" cx="63" cy="-162" rx="27" ry="18"></ellipse>
+<text text-anchor="middle" x="63" y="-156.95" font-family="Times,serif" font-size="14.00" fill="white">c</text>
+</a>
+</g>
+</g>
+<!-- c&#45;&gt;r -->
+<g id="edge1" class="edge">
+<title>c-&gt;r</title>
+<g id="a_edge1"><a title="0&nbsp;→&nbsp;1">
+<path fill="none" stroke="#4a4a4a" d="M54.65,-144.76C50.42,-136.55 45.19,-126.37 40.42,-117.09"></path>
+<polygon fill="#4a4a4a" stroke="#4a4a4a" points="43.68,-115.79 36,-108.49 37.46,-118.99 43.68,-115.79"></polygon>
+</a>
+</g>
+</g>
+<!-- s -->
+<g id="node4" class="node">
+<title>s</title>
+<g id="a_node4"><a title="(3) s">
+<ellipse fill="#404040" stroke="#4a4a4a" cx="99" cy="-90" rx="27" ry="18"></ellipse>
+<text text-anchor="middle" x="99" y="-84.95" font-family="Times,serif" font-size="14.00" fill="white">s</text>
+</a>
+</g>
+</g>
+<!-- c&#45;&gt;s -->
+<g id="edge3" class="edge">
+<title>c-&gt;s</title>
+<g id="a_edge3"><a title="0&nbsp;→&nbsp;3">
+<path fill="none" stroke="#4a4a4a" d="M71.35,-144.76C75.58,-136.55 80.81,-126.37 85.58,-117.09"></path>
+<polygon fill="#4a4a4a" stroke="#4a4a4a" points="88.54,-118.99 90,-108.49 82.32,-115.79 88.54,-118.99"></polygon>
+</a>
+</g>
+</g>
+<!-- s&#45;&gt;w -->
+<g id="edge4" class="edge">
+<title>s-&gt;w</title>
+<g id="a_edge4"><a title="3&nbsp;→&nbsp;2">
+<path fill="none" stroke="#4a4a4a" d="M90.65,-72.76C86.42,-64.55 81.19,-54.37 76.42,-45.09"></path>
+<polygon fill="#4a4a4a" stroke="#4a4a4a" points="79.68,-43.79 72,-36.49 73.46,-46.99 79.68,-43.79"></polygon>
+</a>
+</g>
+</g>
+</g>
+</svg>
 </div>
 </div>
 
