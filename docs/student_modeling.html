@@ -1,0 +1,2100 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.550">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Pankaj Chejara">
+<meta name="dcterms.date" content="2024-06-17">
+
+<title>Vara-modeling - Building learner model using vara dataset</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script src="https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Vara-modeling</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Preliminary idea</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link active" href="./student_modeling.html" aria-current="page"> 
+<span class="menu-text">Implementation using vara dataset</span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#dataset" id="toc-dataset" class="nav-link active" data-scroll-target="#dataset">Dataset</a>
+  <ul class="collapse">
+  <li><a href="#log-dataset" id="toc-log-dataset" class="nav-link" data-scroll-target="#log-dataset">Log dataset</a></li>
+  <li><a href="#skill-dataset" id="toc-skill-dataset" class="nav-link" data-scroll-target="#skill-dataset">Skill dataset</a></li>
+  </ul></li>
+  <li><a href="#pre-processing-data" id="toc-pre-processing-data" class="nav-link" data-scroll-target="#pre-processing-data">Pre-processing data</a></li>
+  <li><a href="#buidling-a-bayesian-network" id="toc-buidling-a-bayesian-network" class="nav-link" data-scroll-target="#buidling-a-bayesian-network">Buidling a Bayesian network</a>
+  <ul class="collapse">
+  <li><a href="#network-structure" id="toc-network-structure" class="nav-link" data-scroll-target="#network-structure">Network structure</a></li>
+  <li><a href="#estimating-probabilities-for-skills" id="toc-estimating-probabilities-for-skills" class="nav-link" data-scroll-target="#estimating-probabilities-for-skills">Estimating probabilities for skills</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Building learner model using vara dataset</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">python</div>
+    <div class="quarto-category">bayesian networks</div>
+    <div class="quarto-category">open learner models</div>
+  </div>
+  </div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Pankaj Chejara </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">June 17, 2024</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<p>This post is in continuation with the <a href="">previous post</a> which presented a preliminary idea on <strong>building open learner models using Bayesian networks</strong>. The last post used the vara dataset partly and analyzed that data with some synthetically generated skill-related data. This post extends that idea with the <strong>vara dataset and actual skill-related dataset</strong>.</p>
+<section id="dataset" class="level1">
+<h1>Dataset</h1>
+<section id="log-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="log-dataset">Log dataset</h2>
+<p>We have a dataset that captured students’ interactions with the Vara platform. This dataset contains information such as number of attempts taken by a student, whether the student answered correctly or not, etc. The dataset has such information for several tasks which are grouped into activities. A sample of the dataset is shown below.</p>
+<div id="5cd2ac8d" class="cell" data-execution_count="39">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_csv(<span class="st">'instructional-trajectory-session-24-results.csv'</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>data.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="39">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">Student</th>
+<th data-quarto-table-cell-role="th">Time spent</th>
+<th data-quarto-table-cell-role="th">Last completed</th>
+<th data-quarto-table-cell-role="th">Harilik murd</th>
+<th data-quarto-table-cell-role="th">Meenutamine</th>
+<th data-quarto-table-cell-role="th">Used supportive materials</th>
+<th data-quarto-table-cell-role="th">1. digitund_harilik murd_ASK1: meenutamine</th>
+<th data-quarto-table-cell-role="th">Required</th>
+<th data-quarto-table-cell-role="th">Time spent in seconds</th>
+<th data-quarto-table-cell-role="th">Number of retries</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">Score.103</th>
+<th data-quarto-table-cell-role="th">Answer (left empty if library is not supported).103</th>
+<th data-quarto-table-cell-role="th">5. digitund_erinimeliste algebraliste murdude liitmine_elulise sisuga ülesanne_2</th>
+<th data-quarto-table-cell-role="th">Required.104</th>
+<th data-quarto-table-cell-role="th">Time spent in seconds.104</th>
+<th data-quarto-table-cell-role="th">Number of retries.104</th>
+<th data-quarto-table-cell-role="th">Used tips.104</th>
+<th data-quarto-table-cell-role="th">Success.104</th>
+<th data-quarto-table-cell-role="th">Score.104</th>
+<th data-quarto-table-cell-role="th">Answer (left empty if library is not supported).104</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>Piret Koppel</td>
+<td>49m 46s</td>
+<td>NaN</td>
+<td>E1</td>
+<td>A1</td>
+<td>0</td>
+<td>T1</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>0</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>T5</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>0</td>
+<td>0</td>
+<td>No</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>Peetri kooli kasutaja 56</td>
+<td>983h 30m</td>
+<td>NaN</td>
+<td>E1</td>
+<td>A1</td>
+<td>0</td>
+<td>T1</td>
+<td>Yes</td>
+<td>228.0</td>
+<td>2</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>T5</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>0</td>
+<td>0</td>
+<td>No</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>Peetri kooli kasutaja 57</td>
+<td>983h 31m 33s</td>
+<td>NaN</td>
+<td>E1</td>
+<td>A1</td>
+<td>0</td>
+<td>T1</td>
+<td>Yes</td>
+<td>177.0</td>
+<td>1</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>T5</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>0</td>
+<td>0</td>
+<td>No</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>Peetri kooli kasutaja 58</td>
+<td>983h 28m 49s</td>
+<td>NaN</td>
+<td>E1</td>
+<td>A1</td>
+<td>0</td>
+<td>T1</td>
+<td>Yes</td>
+<td>10.0</td>
+<td>5</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>T5</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>0</td>
+<td>0</td>
+<td>No</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>Peetri kooli kasutaja 59</td>
+<td>843h 35m 32s</td>
+<td>NaN</td>
+<td>E1</td>
+<td>A1</td>
+<td>0</td>
+<td>T1</td>
+<td>Yes</td>
+<td>48.0</td>
+<td>2</td>
+<td>...</td>
+<td>NaN</td>
+<td>NaN</td>
+<td>T5</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>0</td>
+<td>0</td>
+<td>No</td>
+<td>NaN</td>
+<td>NaN</td>
+</tr>
+</tbody>
+</table>
+
+<p>5 rows × 911 columns</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="skill-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="skill-dataset">Skill dataset</h2>
+<p>Additionally, we have also mapping data for each task to one or more skills. For example, a task is associated with the skill <code>understanding common fractions</code> which is part of a high-level skill <code>II 5) reducing and expanding common fractions; adding, subtracting, multiplying and dividing two common fractions</code>.</p>
+<div id="ce53b1b7" class="cell" data-execution_count="41">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>skills_df <span class="op">=</span> pd.read_csv(<span class="st">'task_skills.csv'</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>skills_df.iloc[:,<span class="dv">0</span>:<span class="dv">3</span>].head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="41">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">task_heirarchy</th>
+<th data-quarto-table-cell-role="th">learning_outcome</th>
+<th data-quarto-table-cell-role="th">LO part</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>E1_A1_T1</td>
+<td>II 5) reducing and expanding common fractions;...</td>
+<td>understanding common fractions</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">1</td>
+<td>E1_A1_T2</td>
+<td>II 5) reducing and expanding common fractions;...</td>
+<td>understanding common fractions</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">2</td>
+<td>E1_A2_T1</td>
+<td>II 5) reducing and expanding common fractions;...</td>
+<td>understanding common fractions</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">3</td>
+<td>E1_A2_T2</td>
+<td>II 5) reducing and expanding common fractions;...</td>
+<td>understanding common fractions</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">4</td>
+<td>E1_A2_T3</td>
+<td>II 5) reducing and expanding common fractions;...</td>
+<td>understanding common fractions</td>
+</tr>
+</tbody>
+</table>
+
+</div>
+</div>
+</div>
+</div>
+<p>As the skills presented above have dependencies on other skills, we will use that knowledge while building knowledge network structure.</p>
+<p>The <a href="#fig-skills" class="quarto-xref">Figure&nbsp;1</a> presents that dependency structure among skills and it also breaks down skills at finer level. Please <strong>don’t feel overwhelmed</strong> by the amount of information presented in the figure. This is just to provide an example of a dependency structure. We will use only some part of the information from this figure (we will discuss it in detail later).</p>
+<p><strong>As an example</strong>, we can see that <code>II 5) reducing and expanding common fractions; adding, subtracting, multiplying and dividing two common fractions</code> has several skills and one of them is <code>understanding common fractions</code> which is a pre-requisite for another skill <code>expanding and reducing common fractions</code>.</p>
+<div id="fig-skills" class="lightbox quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-skills-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="cmap.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" data-glightbox="description: .lightbox-desc-1"><img src="cmap.jpg" class="img-fluid figure-img"></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-skills-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Skills structure
+</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="pre-processing-data" class="level1">
+<h1>Pre-processing data</h1>
+<p><strong>Using number of attempts and success features</strong>: For this example, we are going to use two types of features: 1) number of attempts and 2) success. The first feature captures the number of times a student interacted with a particular task. While the second feature shows whether the response was correct or not.</p>
+<div id="dc130882" class="cell" data-execution_count="193">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> extract_data(row_data):</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">""" This function process records from log data obtained from vara on instructional trajectories.</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">        row_data (dict): row record in dictionary format</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">        records : a dictionary containing processed records</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    labels <span class="op">=</span> {<span class="dv">0</span>:<span class="st">'required'</span>,<span class="dv">1</span>:<span class="st">'time'</span>,<span class="dv">2</span>:<span class="st">'attempts'</span>,<span class="dv">3</span>:<span class="st">'hints'</span>,<span class="dv">4</span>:<span class="st">'success'</span>,<span class="dv">5</span>:<span class="st">'score'</span>,<span class="dv">6</span>:<span class="st">'answer'</span>,<span class="dv">7</span>:<span class="st">'---'</span>}</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    current_episode <span class="op">=</span> <span class="st">''</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    current_activity <span class="op">=</span> <span class="st">''</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    current_task <span class="op">=</span> <span class="st">''</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    records <span class="op">=</span> {}</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> item <span class="kw">in</span> row_data:</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>        current_record <span class="op">=</span> {}</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>        item <span class="op">=</span> <span class="bu">str</span>(item)</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="st">'E'</span> <span class="kw">in</span> item <span class="kw">and</span> <span class="st">'H5P'</span> <span class="kw">not</span> <span class="kw">in</span> item:</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>            current_episode <span class="op">=</span> item</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>            current_activity <span class="op">=</span> <span class="st">''</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>            current_task <span class="op">=</span> <span class="st">''</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> <span class="st">'A'</span> <span class="kw">in</span> item <span class="kw">and</span> <span class="st">'H5P'</span> <span class="kw">not</span> <span class="kw">in</span> item:</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>            current_activity <span class="op">=</span> item</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>            current_task<span class="op">=</span><span class="st">''</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> <span class="st">'T'</span> <span class="kw">in</span> item <span class="kw">and</span> <span class="st">'H5P'</span> <span class="kw">not</span> <span class="kw">in</span> item:</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>            current_task <span class="op">=</span> item</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>            start <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>        <span class="cf">elif</span> <span class="st">'H5P'</span> <span class="kw">in</span> item <span class="kw">or</span> <span class="st">'library'</span> <span class="kw">in</span> item <span class="kw">or</span> <span class="st">':'</span> <span class="kw">in</span> item:</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> current_episode <span class="op">==</span> <span class="st">''</span> <span class="kw">or</span> current_activity <span class="op">==</span> <span class="st">''</span> <span class="kw">or</span> current_task <span class="op">==</span> <span class="st">''</span>:</span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>                <span class="cf">continue</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span>:</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="kw">not</span> start <span class="op">&gt;</span><span class="dv">6</span>:</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>                    records[<span class="ss">f'</span><span class="sc">{</span>current_episode<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>current_activity<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>current_task<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>labels[start]<span class="sc">}</span><span class="ss">'</span>]  <span class="op">=</span> item</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>                start <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>    save_records <span class="op">=</span> {} </span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    processed_record <span class="op">=</span> records</span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> key, value <span class="kw">in</span> processed_record.items():</span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>        parts <span class="op">=</span> key.split(<span class="st">'_'</span>)</span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>        heirarchy <span class="op">=</span> <span class="st">'_'</span>.join(parts[:<span class="dv">3</span>])</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> heirarchy <span class="kw">not</span> <span class="kw">in</span> save_records.keys():</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>            save_records[heirarchy] <span class="op">=</span> {}</span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>        save_records[heirarchy][parts[<span class="dv">3</span>]] <span class="op">=</span> value</span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> save_records</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_attempts_success(data):</span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a><span class="co">    This function extracts attempts and success features for each task and returns a dataframe.</span></span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a><span class="co">    Args:</span></span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a><span class="co">        data (DataFrame): Pandas dataframe of log data</span></span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a><span class="co">    Returns:</span></span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a><span class="co">        DataFrame: Pandas dataframe with attempts and success features for each task</span></span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>    temp <span class="op">=</span> extract_data(data.iloc[<span class="dv">1</span>])</span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>    <span class="co"># preparing columns for resultant dataframe</span></span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>    column_labels <span class="op">=</span> []</span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> key <span class="kw">in</span> temp:</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>        column_labels.append(<span class="ss">f'</span><span class="sc">{</span>key<span class="sc">}</span><span class="ss">_attempts'</span>)</span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>        column_labels.append(<span class="ss">f'</span><span class="sc">{</span>key<span class="sc">}</span><span class="ss">_success'</span>)</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.DataFrame(columns<span class="op">=</span>column_labels)</span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>    <span class="co">#</span></span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> index <span class="kw">in</span> data.index:</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>        record <span class="op">=</span> data.iloc[index]</span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>        processed_record <span class="op">=</span> extract_data(record)</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>        record_dict <span class="op">=</span> {}</span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> key <span class="kw">in</span> processed_record:</span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>            record_dict[<span class="ss">f'</span><span class="sc">{</span>key<span class="sc">}</span><span class="ss">_attempts'</span>] <span class="op">=</span> processed_record[key][<span class="st">'attempts'</span>]</span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>            record_dict[<span class="ss">f'</span><span class="sc">{</span>key<span class="sc">}</span><span class="ss">_success'</span>] <span class="op">=</span> processed_record[key][<span class="st">'success'</span>]</span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a>        dict_df <span class="op">=</span> pd.DataFrame(record_dict, index<span class="op">=</span>[<span class="dv">0</span>])</span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>        df <span class="op">=</span> pd.concat([df, dict_df],axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df</span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> get_attempts_success(data)</span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a>df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="193">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">E1_A1_T1_attempts</th>
+<th data-quarto-table-cell-role="th">E1_A1_T1_success</th>
+<th data-quarto-table-cell-role="th">E1_A1_T2_attempts</th>
+<th data-quarto-table-cell-role="th">E1_A1_T2_success</th>
+<th data-quarto-table-cell-role="th">E1_A2_T1_attempts</th>
+<th data-quarto-table-cell-role="th">E1_A2_T1_success</th>
+<th data-quarto-table-cell-role="th">E1_A2_T2_attempts</th>
+<th data-quarto-table-cell-role="th">E1_A2_T2_success</th>
+<th data-quarto-table-cell-role="th">E1_A2_T3_attempts</th>
+<th data-quarto-table-cell-role="th">E1_A2_T3_success</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">E12_A3_T1_attempts</th>
+<th data-quarto-table-cell-role="th">E12_A3_T1_success</th>
+<th data-quarto-table-cell-role="th">E12_A3_T2_attempts</th>
+<th data-quarto-table-cell-role="th">E12_A3_T2_success</th>
+<th data-quarto-table-cell-role="th">E12_A3_T3_attempts</th>
+<th data-quarto-table-cell-role="th">E12_A3_T3_success</th>
+<th data-quarto-table-cell-role="th">E12_A3_T4_attempts</th>
+<th data-quarto-table-cell-role="th">E12_A3_T4_success</th>
+<th data-quarto-table-cell-role="th">E12_A3_T5_attempts</th>
+<th data-quarto-table-cell-role="th">E12_A3_T5_success</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>...</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">0</td>
+<td>2</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>...</td>
+<td>2</td>
+<td>Yes</td>
+<td>2</td>
+<td>Yes</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>1</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>...</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">0</td>
+<td>5</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>...</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>2</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>...</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+
+<p>5 rows × 210 columns</p>
+</div>
+</div>
+</div>
+</div>
+<p><strong>Removing tasks of no interaction data</strong>: Next, we will remove tasks with no interaction data. There are a few tasks in the instructional trajectory where no students interacted with. Before proceeding to the modeling step, we will remove all such tasks. The following tasks are the ones we will remove from our processed dataset.</p>
+<div id="5dabb85d" class="cell" data-execution_count="194">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Tasks to remove from dataset'</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'-----------------------------'</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>cols_to_remove <span class="op">=</span> []</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> df.columns:</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">'attempts'</span> <span class="kw">in</span> col:</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        col_parts <span class="op">=</span> col.split(<span class="st">'_'</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        vals <span class="op">=</span> <span class="bu">list</span>(df[col].unique())</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">len</span>(vals) <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>            cols_to_remove.append(col)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>            cols_to_remove.append(<span class="st">'_'</span>.join(col_parts[:<span class="dv">3</span>]) <span class="op">+</span> <span class="st">'_success'</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">'_'</span>.join(col_parts[:<span class="dv">3</span>]))</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># removing tasks </span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>df.drop(cols_to_remove, axis<span class="op">=</span><span class="dv">1</span>,inplace<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Tasks to remove from dataset
+-----------------------------
+E1_A1_T2
+E2_A2_T2
+E2_A2_T3
+E3_A1_T1
+E3_A2_T3
+E4_A1_T1
+E5_A3_T1
+E5_A3_T2
+E5_A3_T3
+E9_A1_T5
+E9_A2_T2
+E9_A2_T3
+E9_A3_T1
+E9_A3_T2
+E9_A3_T3
+E9_A3_T4
+E9_A3_T5
+E9_A3_T6
+E9_A3_T7</code></pre>
+</div>
+</div>
+<p>Our dataset now contains only tasks which have some interactions data.</p>
+<div id="5b58417d" class="cell" data-execution_count="187">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="187">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">E1_A1_T1_attempts</th>
+<th data-quarto-table-cell-role="th">E1_A1_T1_success</th>
+<th data-quarto-table-cell-role="th">E1_A2_T1_attempts</th>
+<th data-quarto-table-cell-role="th">E1_A2_T1_success</th>
+<th data-quarto-table-cell-role="th">E1_A2_T2_attempts</th>
+<th data-quarto-table-cell-role="th">E1_A2_T2_success</th>
+<th data-quarto-table-cell-role="th">E1_A2_T3_attempts</th>
+<th data-quarto-table-cell-role="th">E1_A2_T3_success</th>
+<th data-quarto-table-cell-role="th">E1_A3_T1_attempts</th>
+<th data-quarto-table-cell-role="th">E1_A3_T1_success</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">E12_A3_T1_attempts</th>
+<th data-quarto-table-cell-role="th">E12_A3_T1_success</th>
+<th data-quarto-table-cell-role="th">E12_A3_T2_attempts</th>
+<th data-quarto-table-cell-role="th">E12_A3_T2_success</th>
+<th data-quarto-table-cell-role="th">E12_A3_T3_attempts</th>
+<th data-quarto-table-cell-role="th">E12_A3_T3_success</th>
+<th data-quarto-table-cell-role="th">E12_A3_T4_attempts</th>
+<th data-quarto-table-cell-role="th">E12_A3_T4_success</th>
+<th data-quarto-table-cell-role="th">E12_A3_T5_attempts</th>
+<th data-quarto-table-cell-role="th">E12_A3_T5_success</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>...</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">0</td>
+<td>2</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>3</td>
+<td>Yes</td>
+<td>...</td>
+<td>2</td>
+<td>Yes</td>
+<td>2</td>
+<td>Yes</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>1</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>2</td>
+<td>Yes</td>
+<td>...</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">0</td>
+<td>5</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>2</td>
+<td>Yes</td>
+<td>...</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>2</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>2</td>
+<td>Yes</td>
+<td>...</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+<td>0</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+
+<p>5 rows × 172 columns</p>
+</div>
+</div>
+</div>
+</div>
+<p><strong>Converting the number of attempts into a categorical feature</strong>: We will now convert the number of attempts into three categories: zero, low, and high. We will use the following rules to convert number of attempts into categories.</p>
+<ul>
+<li><strong>0</strong>: if the number of attempts is 0 representing the student has not interacted with the task.</li>
+<li><strong>1</strong>: if number of attempts is less than or equal to the median of attempts for the same task.</li>
+<li><strong>2</strong>: if the value is higher than the median value.</li>
+</ul>
+<div id="5550c2e1" class="cell" data-execution_count="195">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> num_to_categ(x, m):</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">        This function discretize the value of x into three categories.</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">            x (int): value to discretize</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">            </span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">            m (int): one of three categories</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> x <span class="op">&gt;</span> m:</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        <span class="fl">2.0</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> x <span class="kw">is</span> np.nan:</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fl">0.0</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">float</span>(x)</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> df.columns:</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">'attempts'</span> <span class="kw">in</span> col:</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>        df[col]<span class="op">=</span>df[col].astype(<span class="bu">float</span>)</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        <span class="co">#df[col].fillna(0, inplace=True)</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        df[col] <span class="op">=</span> df[col].<span class="bu">apply</span>(num_to_categ, m<span class="op">=</span>df[col].median())</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>        <span class="co">#df[col]=df[col].astype(str)</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>        <span class="co">#df[col] = df[col].apply({0:'zero',1:'low',2:'high'}.get)</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="195">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">E1_A1_T1_attempts</th>
+<th data-quarto-table-cell-role="th">E1_A1_T1_success</th>
+<th data-quarto-table-cell-role="th">E1_A2_T1_attempts</th>
+<th data-quarto-table-cell-role="th">E1_A2_T1_success</th>
+<th data-quarto-table-cell-role="th">E1_A2_T2_attempts</th>
+<th data-quarto-table-cell-role="th">E1_A2_T2_success</th>
+<th data-quarto-table-cell-role="th">E1_A2_T3_attempts</th>
+<th data-quarto-table-cell-role="th">E1_A2_T3_success</th>
+<th data-quarto-table-cell-role="th">E1_A3_T1_attempts</th>
+<th data-quarto-table-cell-role="th">E1_A3_T1_success</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">E12_A3_T1_attempts</th>
+<th data-quarto-table-cell-role="th">E12_A3_T1_success</th>
+<th data-quarto-table-cell-role="th">E12_A3_T2_attempts</th>
+<th data-quarto-table-cell-role="th">E12_A3_T2_success</th>
+<th data-quarto-table-cell-role="th">E12_A3_T3_attempts</th>
+<th data-quarto-table-cell-role="th">E12_A3_T3_success</th>
+<th data-quarto-table-cell-role="th">E12_A3_T4_attempts</th>
+<th data-quarto-table-cell-role="th">E12_A3_T4_success</th>
+<th data-quarto-table-cell-role="th">E12_A3_T5_attempts</th>
+<th data-quarto-table-cell-role="th">E12_A3_T5_success</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>...</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">0</td>
+<td>2.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>NaN</td>
+<td>Yes</td>
+<td>...</td>
+<td>NaN</td>
+<td>Yes</td>
+<td>NaN</td>
+<td>Yes</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>1.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>NaN</td>
+<td>Yes</td>
+<td>...</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">0</td>
+<td>NaN</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>NaN</td>
+<td>Yes</td>
+<td>...</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>2.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>NaN</td>
+<td>Yes</td>
+<td>...</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+
+<p>5 rows × 172 columns</p>
+</div>
+</div>
+</div>
+</div>
+<div id="11d7eb3c" class="cell" data-execution_count="197">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df_ <span class="op">=</span> df.fillna(<span class="dv">0</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>df_.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display" data-execution_count="197">
+<div>
+<div>
+
+
+<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
+<thead>
+<tr class="header">
+<th data-quarto-table-cell-role="th"></th>
+<th data-quarto-table-cell-role="th">E1_A1_T1_attempts</th>
+<th data-quarto-table-cell-role="th">E1_A1_T1_success</th>
+<th data-quarto-table-cell-role="th">E1_A2_T1_attempts</th>
+<th data-quarto-table-cell-role="th">E1_A2_T1_success</th>
+<th data-quarto-table-cell-role="th">E1_A2_T2_attempts</th>
+<th data-quarto-table-cell-role="th">E1_A2_T2_success</th>
+<th data-quarto-table-cell-role="th">E1_A2_T3_attempts</th>
+<th data-quarto-table-cell-role="th">E1_A2_T3_success</th>
+<th data-quarto-table-cell-role="th">E1_A3_T1_attempts</th>
+<th data-quarto-table-cell-role="th">E1_A3_T1_success</th>
+<th data-quarto-table-cell-role="th">...</th>
+<th data-quarto-table-cell-role="th">E12_A3_T1_attempts</th>
+<th data-quarto-table-cell-role="th">E12_A3_T1_success</th>
+<th data-quarto-table-cell-role="th">E12_A3_T2_attempts</th>
+<th data-quarto-table-cell-role="th">E12_A3_T2_success</th>
+<th data-quarto-table-cell-role="th">E12_A3_T3_attempts</th>
+<th data-quarto-table-cell-role="th">E12_A3_T3_success</th>
+<th data-quarto-table-cell-role="th">E12_A3_T4_attempts</th>
+<th data-quarto-table-cell-role="th">E12_A3_T4_success</th>
+<th data-quarto-table-cell-role="th">E12_A3_T5_attempts</th>
+<th data-quarto-table-cell-role="th">E12_A3_T5_success</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>...</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">0</td>
+<td>2.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>Yes</td>
+<td>...</td>
+<td>0.0</td>
+<td>Yes</td>
+<td>0.0</td>
+<td>Yes</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>1.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>Yes</td>
+<td>...</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+</tr>
+<tr class="even">
+<td data-quarto-table-cell-role="th">0</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>Yes</td>
+<td>...</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+</tr>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">0</td>
+<td>2.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>Yes</td>
+<td>...</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+<td>0.0</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+
+<p>5 rows × 172 columns</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section id="buidling-a-bayesian-network" class="level1">
+<h1>Buidling a Bayesian network</h1>
+<p>Now, we will move to building a Bayesian network and learn probabilities from our log dataset. In our dataset, we have interaction data (e.g., number of attempts). Additionally, we have the information about which skill is associated with which task. Those skills, however, are directly observable, also referred to as <code>latent variables</code>.</p>
+<p>Our goal is to <strong>build a network using observable (interaction features) and unobservable traits (skills), and learn conditional probabilities</strong> utilizing our log data. For this task, we will use the <strong>Expectation Maximization</strong> algorithm which allows the estimation of probabilities for latent variables.</p>
+<section id="network-structure" class="level2">
+<h2 class="anchored" data-anchor-id="network-structure">Network structure</h2>
+<p>As the first step, we will build a network structure where we will specify nodes (or variables) and the relationship between those nodes. <a href="#fig-nx" class="quarto-xref">Figure&nbsp;2</a> shows a part of our network structure. We can see that the skill <code>expands and reduces common fractions</code> requires the skill of <code>understanding common fractions</code>. Also, these skills influence the number of attempts and success on tasks associated with them. For example, task <code>E1_A1_T1</code> is associated with <code>understanding common fractions</code>; a student with a strong hold on the skill is likely to respond to the task correctly with relatively a lesser number of attempts in comparison with another student with a weak understanding of that skill.</p>
+<div id="cell-fig-nx" class="cell" data-execution_count="163">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyvis.network <span class="im">import</span> Network</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> nx.DiGraph()</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>g.add_edges_from([(<span class="st">'understanding common fractions'</span>,<span class="st">'expands and reduces common fractions'</span>),</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">'understanding common fractions'</span>,<span class="st">'E1_A1_T1_attempts'</span>),</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">'understanding common fractions'</span>,<span class="st">'E1_A1_T1_success'</span>),</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">'expands and reduces common fractions'</span>,<span class="st">'E2_A1_T3_attempts'</span>),</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">'expands and reduces common fractions'</span>,<span class="st">'E2_A1_T3_success'</span>)])</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>nx.draw(g, with_labels<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>plt.margins(x<span class="op">=</span><span class="fl">0.2</span>)</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-nx" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-nx-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="student_modeling_files/figure-html/fig-nx-output-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-nx-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;2: Partial structure of our network
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="d7e40072" class="cell" data-execution_count="176">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>skills_df <span class="op">=</span> pd.read_csv(<span class="st">'task_skills.csv'</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>latent_variables <span class="op">=</span> [<span class="st">'understanding common fractions'</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>       <span class="st">'expands and reduces common fractions'</span>,</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>       <span class="st">'understanding algebraic fractions'</span>,</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>       <span class="st">'projecting operations of expanding and reducing common fractions'</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>       <span class="st">'expands and reduces algebraic fractions'</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>       <span class="st">'projecting operations of multiplication of common fractions'</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>       <span class="st">'multiplies algebraic fractions'</span>, <span class="st">'divides algerbaic fractions'</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>       <span class="st">'adds and substracts of algebraic fractions'</span>,</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>       <span class="st">'projecting operations of adding common fractions'</span>,</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">'II 5'</span>,<span class="st">'III 4'</span>,<span class="st">'III 5'</span>]</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_task_skill(df, task):</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co">        This function returns the learning outcome associated with the specified task.</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co">            df (DataFrame) : Pandas DataFrame object of logs data</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co">            task (str)     : Task for which to return learning outcome</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="co">            </span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="co">            str: learning outcome</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df.loc[df[<span class="st">'task_heirarchy'</span>] <span class="op">==</span> task, <span class="st">'learning_outcome'</span>].values[<span class="dv">0</span>]</span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="co"># preparing edges for Bayesian network</span></span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>edges <span class="op">=</span> []</span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> index <span class="kw">in</span> skills_df.index:</span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>    record <span class="op">=</span> skills_df.iloc[index].values</span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>    task <span class="op">=</span> record[<span class="dv">0</span>]</span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>    high_skill <span class="op">=</span> record[<span class="dv">1</span>]</span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>    high_skill <span class="op">=</span> high_skill.split(<span class="st">')'</span>)[<span class="dv">0</span>]</span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>    skill <span class="op">=</span> record[<span class="dv">2</span>]</span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>    task_attempts <span class="op">=</span> <span class="ss">f'</span><span class="sc">{</span>task<span class="sc">}</span><span class="ss">_attempts'</span></span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>    task_success <span class="op">=</span> <span class="ss">f'</span><span class="sc">{</span>task<span class="sc">}</span><span class="ss">_success'</span></span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> task_attempts <span class="kw">in</span> cols_to_remove <span class="kw">or</span> task_attempts <span class="kw">not</span> <span class="kw">in</span> df.columns <span class="kw">or</span> task_success <span class="kw">not</span> <span class="kw">in</span> df.columns:</span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">'Removing '</span>,task)</span>
+<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>        <span class="cf">continue</span></span>
+<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>    edges.append((high_skill, skill))</span>
+<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>    edges.append((skill, task_attempts))</span>
+<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>    edges.append((skill, task_success))</span>
+<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>    edges.append((task_attempts, task_success))</span>
+<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a><span class="co"># adding dependency from skill network</span></span>
+<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>edges_ <span class="op">=</span> <span class="bu">list</span>(<span class="bu">set</span>(edges))</span>
+<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'understanding common fractions'</span>,<span class="st">'expands and reduces common fractions'</span>))</span>
+<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'II 5'</span>,<span class="st">'III 4'</span>))</span>
+<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'II 5'</span>,<span class="st">'III 5'</span>))</span>
+<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'III 4'</span>,<span class="st">'III 5'</span>))</span>
+<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'understanding algebraic fractions'</span>,<span class="st">'expands and reduces algebraic fractions'</span>))</span>
+<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'expands and reduces algebraic fractions'</span>, <span class="st">'adds and substracts of algebraic fractions'</span>))</span>
+<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'adds and substracts of algebraic fractions'</span>,<span class="st">'multiplies algebraic fractions'</span>))</span>
+<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'multiplies algebraic fractions'</span>,<span class="st">'divides algerbaic fractions'</span>))</span>
+<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'projecting operations of expanding and reducing common fractions'</span>, <span class="st">'projecting operations of multiplication of common fractions'</span>))</span>
+<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'projecting operations of multiplication of common fractions'</span>,<span class="st">'projecting operations of adding common fractions'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Removing  E1_A1_T2
+Removing  E2_A1_T3
+Removing  E2_A2_T2
+Removing  E2_A2_T3
+Removing  E3_A1_T1
+Removing  E3_A2_T3
+Removing  E4_A1_T1
+Removing  E5_A3_T1
+Removing  E5_A3_T2
+Removing  E5_A3_T3
+Removing  E7_A2_T3
+Removing  E9_A1_T5
+Removing  E9_A2_T6
+Removing  E9_A2_T2
+Removing  E9_A2_T3
+Removing  E9_A3_T1
+Removing  E9_A3_T2
+Removing  E9_A3_T3
+Removing  E9_A3_T4
+Removing  E9_A3_T5
+Removing  E9_A3_T6
+Removing  E9_A3_T7</code></pre>
+</div>
+</div>
+<p><a href="#fig-complete" class="quarto-xref">Figure&nbsp;3</a> shows the complete structure of our network.</p>
+<div id="cell-fig-complete" class="cell" data-execution_count="177">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>nx_graph <span class="op">=</span> nx.DiGraph()</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>nx_graph.add_edges_from(edges_)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>nt <span class="op">=</span> Network(<span class="st">'800px'</span>, <span class="st">'1000px'</span>,notebook<span class="op">=</span><span class="va">True</span>,directed <span class="op">=</span><span class="va">True</span>,cdn_resources<span class="op">=</span><span class="st">'in_line'</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># populates the nodes and edges data structures</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>nt.from_nx(nx_graph)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>nt.show(<span class="st">'nx.html'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Warning: When  cdn_resources is 'local' jupyter notebook has issues displaying graphics on chrome/safari. Use cdn_resources='in_line' or cdn_resources='remote' if you have issues viewing graphics in a notebook.
+nx.html</code></pre>
+</div>
+<div id="fig-complete" class="cell-output cell-output-display quarto-figure quarto-figure-center quarto-float anchored" data-execution_count="177">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-complete-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+
+        <iframe width="1000px" height="800px" src="nx.html" frameborder="0" allowfullscreen=""></iframe>
+        
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-complete-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;3: Complete network structure
+</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section id="estimating-probabilities-for-skills" class="level2">
+<h2 class="anchored" data-anchor-id="estimating-probabilities-for-skills">Estimating probabilities for skills</h2>
+<p>Now, we will use our network structure and apply an estimation algorithm, i.e., Expectation Maximization (EM). The EM algorithm can be used with latent variables to learn their probabilities.</p>
+<div id="ddc00cbc" class="cell" data-execution_count="198">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pgmpy.models <span class="im">import</span> BayesianNetwork</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pgmpy.estimators <span class="im">import</span> ExpectationMaximization <span class="im">as</span> EM</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pgmpy.factors.discrete.CPD <span class="im">import</span> TabularCPD</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co"># building bayesian network</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>new_G <span class="op">=</span> BayesianNetwork(edges_, latents<span class="op">=</span>{<span class="st">'understanding common fractions'</span>,</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>       <span class="st">'expands and reduces common fractions'</span>,</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>       <span class="st">'understanding algebraic fractions'</span>,</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>       <span class="st">'projecting operations of expanding and reducing common fractions'</span>,</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>       <span class="st">'expands and reduces algebraic fractions'</span>,</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>       <span class="st">'projecting operations of multiplication of common fractions'</span>,</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>       <span class="st">'multiplies algebraic fractions'</span>, <span class="st">'divides algerbaic fractions'</span>,</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>       <span class="st">'adds and substracts of algebraic fractions'</span>,</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>       <span class="st">'projecting operations of adding common fractions'</span>,</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">'II 5'</span>,<span class="st">'III 4'</span>,<span class="st">'III 5'</span>})</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="co"># initializing EM estimator</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>estimator <span class="op">=</span> EM(new_G, df_)</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co"># estimating parameters</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>all_cpds <span class="op">=</span> estimator.get_parameters(max_iter<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"2bf8bedef791471fbe0fbd9d3a42b2d9","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+</div>
+<div id="c0f98175" class="cell">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>Now, we have our probabilities <span class="cf">for</span> our skills learned <span class="im">from</span> the log data. These are shown below.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="15699cf4" class="cell" data-execution_count="201">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> print_full(cpd):</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    backup <span class="op">=</span> TabularCPD._truncate_strtable</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    TabularCPD._truncate_strtable <span class="op">=</span> <span class="kw">lambda</span> <span class="va">self</span>, x: x</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(cpd)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    TabularCPD._truncate_strtable <span class="op">=</span> backup</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> cpd <span class="kw">in</span> all_cpds:</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    v <span class="op">=</span> cpd.variable</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> v <span class="kw">in</span> latent_variables:</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">'</span>,cpd.variable)</span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">'============='</span>)</span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>        print_full(cpd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+ projecting operations of expanding and reducing common fractions
+=============
++---------------------------------------------------------------------+---------------------+---------------------+
+| III 4                                                               | III 4(0)            | III 4(1)            |
++---------------------------------------------------------------------+---------------------+---------------------+
+| projecting operations of expanding and reducing common fractions(0) | 0.7494738672411839  | 0.5902968258667194  |
++---------------------------------------------------------------------+---------------------+---------------------+
+| projecting operations of expanding and reducing common fractions(1) | 0.25052613275881597 | 0.40970317413328067 |
++---------------------------------------------------------------------+---------------------+---------------------+
+
+ divides algerbaic fractions
+=============
++--------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+
+| III 5                          | III 5(0)                          | III 5(0)                          | III 5(1)                          | III 5(1)                          |
++--------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+
+| multiplies algebraic fractions | multiplies algebraic fractions(0) | multiplies algebraic fractions(1) | multiplies algebraic fractions(0) | multiplies algebraic fractions(1) |
++--------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+
+| divides algerbaic fractions(0) | 0.02386591384846834               | 0.41801638198374025               | 0.09971273204381455               | 0.2312903436754715                |
++--------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+
+| divides algerbaic fractions(1) | 0.9761340861515316                | 0.5819836180162596                | 0.9002872679561854                | 0.7687096563245285                |
++--------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+
+
+ adds and substracts of algebraic fractions
+=============
++-----------------------------------------------+--------------------------------------------+--------------------------------------------+--------------------------------------------+--------------------------------------------+
+| III 5                                         | III 5(0)                                   | III 5(0)                                   | III 5(1)                                   | III 5(1)                                   |
++-----------------------------------------------+--------------------------------------------+--------------------------------------------+--------------------------------------------+--------------------------------------------+
+| expands and reduces algebraic fractions       | expands and reduces algebraic fractions(0) | expands and reduces algebraic fractions(1) | expands and reduces algebraic fractions(0) | expands and reduces algebraic fractions(1) |
++-----------------------------------------------+--------------------------------------------+--------------------------------------------+--------------------------------------------+--------------------------------------------+
+| adds and substracts of algebraic fractions(0) | 0.6125142227829531                         | 0.3017138636774878                         | 0.888377311068268                          | 0.719659004271239                          |
++-----------------------------------------------+--------------------------------------------+--------------------------------------------+--------------------------------------------+--------------------------------------------+
+| adds and substracts of algebraic fractions(1) | 0.38748577721704686                        | 0.6982861363225121                         | 0.11162268893173202                        | 0.280340995728761                          |
++-----------------------------------------------+--------------------------------------------+--------------------------------------------+--------------------------------------------+--------------------------------------------+
+
+ expands and reduces common fractions
+=============
++-----------------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+
+| II 5                                    | II 5(0)                           | II 5(0)                           | II 5(1)                           | II 5(1)                           |
++-----------------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+
+| understanding common fractions          | understanding common fractions(0) | understanding common fractions(1) | understanding common fractions(0) | understanding common fractions(1) |
++-----------------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+
+| expands and reduces common fractions(0) | 0.4971784673726968                | 0.8799497794636845                | 0.29688251965672935               | 0.3688393093212617                |
++-----------------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+
+| expands and reduces common fractions(1) | 0.5028215326273032                | 0.12005022053631542               | 0.7031174803432706                | 0.6311606906787384                |
++-----------------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+
+
+ understanding algebraic fractions
+=============
++--------------------------------------+---------------------+--------------------+
+| III 4                                | III 4(0)            | III 4(1)           |
++--------------------------------------+---------------------+--------------------+
+| understanding algebraic fractions(0) | 0.744788662946919   | 0.6222785170824062 |
++--------------------------------------+---------------------+--------------------+
+| understanding algebraic fractions(1) | 0.25521133705308097 | 0.3777214829175937 |
++--------------------------------------+---------------------+--------------------+
+
+ II 5
+=============
++---------+----------+
+| II 5(0) | 0.643554 |
++---------+----------+
+| II 5(1) | 0.356446 |
++---------+----------+
+
+ multiplies algebraic fractions
+=============
++--------------------------------------------+-----------------------------------------------+-----------------------------------------------+-----------------------------------------------+-----------------------------------------------+
+| III 5                                      | III 5(0)                                      | III 5(0)                                      | III 5(1)                                      | III 5(1)                                      |
++--------------------------------------------+-----------------------------------------------+-----------------------------------------------+-----------------------------------------------+-----------------------------------------------+
+| adds and substracts of algebraic fractions | adds and substracts of algebraic fractions(0) | adds and substracts of algebraic fractions(1) | adds and substracts of algebraic fractions(0) | adds and substracts of algebraic fractions(1) |
++--------------------------------------------+-----------------------------------------------+-----------------------------------------------+-----------------------------------------------+-----------------------------------------------+
+| multiplies algebraic fractions(0)          | 0.5188623887745587                            | 0.6815297712943498                            | 0.41386209798445317                           | 0.7152311956541716                            |
++--------------------------------------------+-----------------------------------------------+-----------------------------------------------+-----------------------------------------------+-----------------------------------------------+
+| multiplies algebraic fractions(1)          | 0.48113761122544135                           | 0.3184702287056503                            | 0.5861379020155468                            | 0.2847688043458284                            |
++--------------------------------------------+-----------------------------------------------+-----------------------------------------------+-----------------------------------------------+-----------------------------------------------+
+
+ projecting operations of adding common fractions
+=============
++-------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+
+| III 4                                                       | III 4(0)                                                       | III 4(0)                                                       | III 4(1)                                                       | III 4(1)                                                       |
++-------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+
+| projecting operations of multiplication of common fractions | projecting operations of multiplication of common fractions(0) | projecting operations of multiplication of common fractions(1) | projecting operations of multiplication of common fractions(0) | projecting operations of multiplication of common fractions(1) |
++-------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+
+| projecting operations of adding common fractions(0)         | 0.7927767373027053                                             | 0.052445309947635736                                           | 0.7726546726835963                                             | 0.8001375417436695                                             |
++-------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+
+| projecting operations of adding common fractions(1)         | 0.20722326269729466                                            | 0.9475546900523643                                             | 0.22734532731640364                                            | 0.19986245825633053                                            |
++-------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+
+
+ III 5
+=============
++----------+---------------------+--------------------+---------------------+---------------------+
+| II 5     | II 5(0)             | II 5(0)            | II 5(1)             | II 5(1)             |
++----------+---------------------+--------------------+---------------------+---------------------+
+| III 4    | III 4(0)            | III 4(1)           | III 4(0)            | III 4(1)            |
++----------+---------------------+--------------------+---------------------+---------------------+
+| III 5(0) | 0.39932268286608946 | 0.7019768891251945 | 0.04303156881672869 | 0.30376319006718094 |
++----------+---------------------+--------------------+---------------------+---------------------+
+| III 5(1) | 0.6006773171339106  | 0.2980231108748055 | 0.9569684311832714  | 0.6962368099328191  |
++----------+---------------------+--------------------+---------------------+---------------------+
+
+ expands and reduces algebraic fractions
+=============
++--------------------------------------------+--------------------------------------+--------------------------------------+--------------------------------------+--------------------------------------+
+| III 5                                      | III 5(0)                             | III 5(0)                             | III 5(1)                             | III 5(1)                             |
++--------------------------------------------+--------------------------------------+--------------------------------------+--------------------------------------+--------------------------------------+
+| understanding algebraic fractions          | understanding algebraic fractions(0) | understanding algebraic fractions(1) | understanding algebraic fractions(0) | understanding algebraic fractions(1) |
++--------------------------------------------+--------------------------------------+--------------------------------------+--------------------------------------+--------------------------------------+
+| expands and reduces algebraic fractions(0) | 0.018824154596772086                 | 0.11595852642137806                  | 0.015329283167732771                 | 0.2402182179964657                   |
++--------------------------------------------+--------------------------------------+--------------------------------------+--------------------------------------+--------------------------------------+
+| expands and reduces algebraic fractions(1) | 0.9811758454032279                   | 0.884041473578622                    | 0.9846707168322673                   | 0.7597817820035343                   |
++--------------------------------------------+--------------------------------------+--------------------------------------+--------------------------------------+--------------------------------------+
+
+ III 4
+=============
++----------+---------------------+---------------------+
+| II 5     | II 5(0)             | II 5(1)             |
++----------+---------------------+---------------------+
+| III 4(0) | 0.34984002231434896 | 0.35812789434538655 |
++----------+---------------------+---------------------+
+| III 4(1) | 0.650159977685651   | 0.6418721056546135  |
++----------+---------------------+---------------------+
+
+ projecting operations of multiplication of common fractions
+=============
++------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+
+| III 4                                                            | III 4(0)                                                            | III 4(0)                                                            | III 4(1)                                                            | III 4(1)                                                            |
++------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+
+| projecting operations of expanding and reducing common fractions | projecting operations of expanding and reducing common fractions(0) | projecting operations of expanding and reducing common fractions(1) | projecting operations of expanding and reducing common fractions(0) | projecting operations of expanding and reducing common fractions(1) |
++------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+
+| projecting operations of multiplication of common fractions(0)   | 0.03150929049438947                                                 | 0.9776846976468124                                                  | 0.03677004481066036                                                 | 0.22141347966604585                                                 |
++------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+
+| projecting operations of multiplication of common fractions(1)   | 0.9684907095056106                                                  | 0.022315302353187544                                                | 0.9632299551893396                                                  | 0.7785865203339541                                                  |
++------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+
+
+ understanding common fractions
+=============
++-----------------------------------+---------------------+---------------------+
+| II 5                              | II 5(0)             | II 5(1)             |
++-----------------------------------+---------------------+---------------------+
+| understanding common fractions(0) | 0.25140098267644934 | 0.49650797145292713 |
++-----------------------------------+---------------------+---------------------+
+| understanding common fractions(1) | 0.7485990173235506  | 0.5034920285470729  |
++-----------------------------------+---------------------+---------------------+</code></pre>
+</div>
+</div>
+
+
+<div class="hidden" aria-hidden="true">
+<span class="glightbox-desc lightbox-desc-1">Figure&nbsp;1: Skills structure</span>
+</div>
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom"});
+window.onload = () => {
+  lightboxQuarto.on('slide_before_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    const href = trigger.getAttribute('href');
+    if (href !== null) {
+      const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+      if (imgEl !== null) {
+        const srcAttr = imgEl.getAttribute("src");
+        if (srcAttr && srcAttr.startsWith("data:")) {
+          slideConfig.href = srcAttr;
+        }
+      }
+    } 
+  });
+
+  lightboxQuarto.on('slide_after_load', (data) => {
+    const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+    if (window.Quarto?.typesetMath) {
+      window.Quarto.typesetMath(slideNode);
+    }
+  });
+
+};
+          </script>
+
+
+
+
+</body></html>
