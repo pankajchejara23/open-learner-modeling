@@ -108,7 +108,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
-<script src="https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
 
 
 <link rel="stylesheet" href="styles.css">
@@ -165,6 +164,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#network-structure" id="toc-network-structure" class="nav-link" data-scroll-target="#network-structure">Network structure</a></li>
   <li><a href="#estimating-probabilities-for-skills" id="toc-estimating-probabilities-for-skills" class="nav-link" data-scroll-target="#estimating-probabilities-for-skills">Estimating probabilities for skills</a></li>
+  <li><a href="#assigning-learned-probabilities-to-the-bayesian-network" id="toc-assigning-learned-probabilities-to-the-bayesian-network" class="nav-link" data-scroll-target="#assigning-learned-probabilities-to-the-bayesian-network">Assigning learned probabilities to the Bayesian network</a></li>
+  <li><a href="#performing-inference-using-the-network" id="toc-performing-inference-using-the-network" class="nav-link" data-scroll-target="#performing-inference-using-the-network">Performing inference using the network</a>
+  <ul class="collapse">
+  <li><a href="#visualizing-the-network-with-probabilities" id="toc-visualizing-the-network-with-probabilities" class="nav-link" data-scroll-target="#visualizing-the-network-with-probabilities">Visualizing the network with probabilities</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -211,6 +215,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>This post is in continuation with the <a href="">previous post</a> which presented a preliminary idea on <strong>building open learner models using Bayesian networks</strong>. The last post used the vara dataset partly and analyzed that data with some synthetically generated skill-related data. This post extends that idea with the <strong>vara dataset and actual skill-related dataset</strong>.</p>
 <section id="dataset" class="level1">
 <h1>Dataset</h1>
+<p>Our dataset include two seperate CSV files: one for log interaction data and another for task to skill mapping. These two datasets are explained in details below.</p>
 <section id="log-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="log-dataset">Log dataset</h2>
 <p>We have a dataset that captured students’ interactions with the Vara platform. This dataset contains information such as number of attempts taken by a student, whether the student answered correctly or not, etc. The dataset has such information for several tasks which are grouped into activities. A sample of the dataset is shown below.</p>
@@ -451,7 +456,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="fig-skills" class="lightbox quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-skills-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="cmap.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" data-glightbox="description: .lightbox-desc-1"><img src="cmap.jpg" class="img-fluid figure-img"></a>
+<a href="cmap.jpg" class="lightbox" data-glightbox="description: .lightbox-desc-1" data-gallery="quarto-lightbox-gallery-1"><img src="cmap.jpg" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-skills-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: Skills structure
@@ -725,255 +730,67 @@ Figure&nbsp;1: Skills structure
 </div>
 </div>
 <p><strong>Removing tasks of no interaction data</strong>: Next, we will remove tasks with no interaction data. There are a few tasks in the instructional trajectory where no students interacted with. Before proceeding to the modeling step, we will remove all such tasks. The following tasks are the ones we will remove from our processed dataset.</p>
-<div id="5dabb85d" class="cell" data-execution_count="194">
+<div id="f3b59e91" class="cell" data-execution_count="219">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Tasks to remove from dataset'</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'-----------------------------'</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>cols_to_remove <span class="op">=</span> []</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> df.columns:</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">'attempts'</span> <span class="kw">in</span> col:</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        col_parts <span class="op">=</span> col.split(<span class="st">'_'</span>)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        vals <span class="op">=</span> <span class="bu">list</span>(df[col].unique())</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">len</span>(vals) <span class="op">==</span> <span class="dv">1</span>:</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>            cols_to_remove.append(col)</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>            cols_to_remove.append(<span class="st">'_'</span>.join(col_parts[:<span class="dv">3</span>]) <span class="op">+</span> <span class="st">'_success'</span>)</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>            <span class="bu">print</span>(<span class="st">'_'</span>.join(col_parts[:<span class="dv">3</span>]))</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co"># removing tasks </span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>df.drop(cols_to_remove, axis<span class="op">=</span><span class="dv">1</span>,inplace<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># removing tasks without any interactions</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>cols_to_remove <span class="op">=</span> []</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> df.columns:</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">'attempts'</span> <span class="kw">in</span> col:</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        col_parts <span class="op">=</span> col.split(<span class="st">'_'</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>        vals <span class="op">=</span> <span class="bu">list</span>(df[col].unique())</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">len</span>(vals) <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>            cols_to_remove.append(col)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>            cols_to_remove.append(<span class="st">'_'</span>.join(col_parts[:<span class="dv">3</span>]) <span class="op">+</span> <span class="st">'_success'</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># removing tasks </span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>df.drop(cols_to_remove, axis<span class="op">=</span><span class="dv">1</span>,inplace<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Tasks to remove from dataset
------------------------------
-E1_A1_T2
-E2_A2_T2
-E2_A2_T3
-E3_A1_T1
-E3_A2_T3
-E4_A1_T1
-E5_A3_T1
-E5_A3_T2
-E5_A3_T3
-E9_A1_T5
-E9_A2_T2
-E9_A2_T3
-E9_A3_T1
-E9_A3_T2
-E9_A3_T3
-E9_A3_T4
-E9_A3_T5
-E9_A3_T6
-E9_A3_T7</code></pre>
-</div>
 </div>
 <p>Our dataset now contains only tasks which have some interactions data.</p>
-<div id="5b58417d" class="cell" data-execution_count="187">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-display" data-execution_count="187">
-<div>
-<div>
-
-
-<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">E1_A1_T1_attempts</th>
-<th data-quarto-table-cell-role="th">E1_A1_T1_success</th>
-<th data-quarto-table-cell-role="th">E1_A2_T1_attempts</th>
-<th data-quarto-table-cell-role="th">E1_A2_T1_success</th>
-<th data-quarto-table-cell-role="th">E1_A2_T2_attempts</th>
-<th data-quarto-table-cell-role="th">E1_A2_T2_success</th>
-<th data-quarto-table-cell-role="th">E1_A2_T3_attempts</th>
-<th data-quarto-table-cell-role="th">E1_A2_T3_success</th>
-<th data-quarto-table-cell-role="th">E1_A3_T1_attempts</th>
-<th data-quarto-table-cell-role="th">E1_A3_T1_success</th>
-<th data-quarto-table-cell-role="th">...</th>
-<th data-quarto-table-cell-role="th">E12_A3_T1_attempts</th>
-<th data-quarto-table-cell-role="th">E12_A3_T1_success</th>
-<th data-quarto-table-cell-role="th">E12_A3_T2_attempts</th>
-<th data-quarto-table-cell-role="th">E12_A3_T2_success</th>
-<th data-quarto-table-cell-role="th">E12_A3_T3_attempts</th>
-<th data-quarto-table-cell-role="th">E12_A3_T3_success</th>
-<th data-quarto-table-cell-role="th">E12_A3_T4_attempts</th>
-<th data-quarto-table-cell-role="th">E12_A3_T4_success</th>
-<th data-quarto-table-cell-role="th">E12_A3_T5_attempts</th>
-<th data-quarto-table-cell-role="th">E12_A3_T5_success</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>...</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">0</td>
-<td>2</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>3</td>
-<td>Yes</td>
-<td>...</td>
-<td>2</td>
-<td>Yes</td>
-<td>2</td>
-<td>Yes</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
-<td>1</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>2</td>
-<td>Yes</td>
-<td>...</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">0</td>
-<td>5</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>2</td>
-<td>Yes</td>
-<td>...</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
-<td>2</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>2</td>
-<td>Yes</td>
-<td>...</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-<td>0</td>
-<td>No</td>
-</tr>
-</tbody>
-</table>
-
-<p>5 rows × 172 columns</p>
-</div>
-</div>
-</div>
-</div>
 <p><strong>Converting the number of attempts into a categorical feature</strong>: We will now convert the number of attempts into three categories: zero, low, and high. We will use the following rules to convert number of attempts into categories.</p>
 <ul>
 <li><strong>0</strong>: if the number of attempts is 0 representing the student has not interacted with the task.</li>
 <li><strong>1</strong>: if number of attempts is less than or equal to the median of attempts for the same task.</li>
 <li><strong>2</strong>: if the value is higher than the median value.</li>
 </ul>
-<div id="5550c2e1" class="cell" data-execution_count="195">
+<div id="5550c2e1" class="cell" data-execution_count="322">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> num_to_categ(x, m):</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">        This function discretize the value of x into three categories.</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">            x (int): value to discretize</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">            </span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">            m (int): one of three categories</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> x <span class="op">&gt;</span> m:</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        <span class="fl">2.0</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> x <span class="kw">is</span> np.nan:</span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fl">0.0</span></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">float</span>(x)</span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> df.columns:</span>
-<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">'attempts'</span> <span class="kw">in</span> col:</span>
-<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>        df[col]<span class="op">=</span>df[col].astype(<span class="bu">float</span>)</span>
-<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        <span class="co">#df[col].fillna(0, inplace=True)</span></span>
-<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        df[col] <span class="op">=</span> df[col].<span class="bu">apply</span>(num_to_categ, m<span class="op">=</span>df[col].median())</span>
-<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>        <span class="co">#df[col]=df[col].astype(str)</span></span>
-<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>        <span class="co">#df[col] = df[col].apply({0:'zero',1:'low',2:'high'}.get)</span></span>
-<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>df.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> num_to_categ(x, m):</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">        This function discretize the value of x into three categories.</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">            x (int): value to discretize</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">            </span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">            m (int): one of three categories</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> x <span class="op">&gt;</span> m:</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="fl">2.0</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> x <span class="kw">is</span> np.nan:</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="fl">0.0</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">float</span>(x)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> col <span class="kw">in</span> df.columns:</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="st">'attempts'</span> <span class="kw">in</span> col:</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>        df[col]<span class="op">=</span>df[col].astype(<span class="bu">float</span>)</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>        <span class="co">#df[col].fillna(0, inplace=True)</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>        df[col] <span class="op">=</span> df[col].<span class="bu">apply</span>(num_to_categ, m<span class="op">=</span>df[col].median())</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>        <span class="co">#df[col]=df[col].astype(str)</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>        <span class="co">#df[col] = df[col].apply({0:'zero',1:'low',2:'high'}.get)</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>df_ <span class="op">=</span> df.fillna(<span class="dv">0</span>)</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>df_.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-display" data-execution_count="195">
+<div class="cell-output cell-output-display" data-execution_count="322">
 <div>
 <div>
 
@@ -1032,175 +849,7 @@ E9_A3_T7</code></pre>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">0</td>
-<td>2.0</td>
-<td>No</td>
 <td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>NaN</td>
-<td>Yes</td>
-<td>...</td>
-<td>NaN</td>
-<td>Yes</td>
-<td>NaN</td>
-<td>Yes</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
-<td>1.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>NaN</td>
-<td>Yes</td>
-<td>...</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">0</td>
-<td>NaN</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>NaN</td>
-<td>Yes</td>
-<td>...</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-</tr>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
-<td>2.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>NaN</td>
-<td>Yes</td>
-<td>...</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-</tr>
-</tbody>
-</table>
-
-<p>5 rows × 172 columns</p>
-</div>
-</div>
-</div>
-</div>
-<div id="11d7eb3c" class="cell" data-execution_count="197">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df_ <span class="op">=</span> df.fillna(<span class="dv">0</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>df_.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-display" data-execution_count="197">
-<div>
-<div>
-
-
-<table class="dataframe table table-sm table-striped small" data-quarto-postprocess="true" data-border="1">
-<thead>
-<tr class="header">
-<th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">E1_A1_T1_attempts</th>
-<th data-quarto-table-cell-role="th">E1_A1_T1_success</th>
-<th data-quarto-table-cell-role="th">E1_A2_T1_attempts</th>
-<th data-quarto-table-cell-role="th">E1_A2_T1_success</th>
-<th data-quarto-table-cell-role="th">E1_A2_T2_attempts</th>
-<th data-quarto-table-cell-role="th">E1_A2_T2_success</th>
-<th data-quarto-table-cell-role="th">E1_A2_T3_attempts</th>
-<th data-quarto-table-cell-role="th">E1_A2_T3_success</th>
-<th data-quarto-table-cell-role="th">E1_A3_T1_attempts</th>
-<th data-quarto-table-cell-role="th">E1_A3_T1_success</th>
-<th data-quarto-table-cell-role="th">...</th>
-<th data-quarto-table-cell-role="th">E12_A3_T1_attempts</th>
-<th data-quarto-table-cell-role="th">E12_A3_T1_success</th>
-<th data-quarto-table-cell-role="th">E12_A3_T2_attempts</th>
-<th data-quarto-table-cell-role="th">E12_A3_T2_success</th>
-<th data-quarto-table-cell-role="th">E12_A3_T3_attempts</th>
-<th data-quarto-table-cell-role="th">E12_A3_T3_success</th>
-<th data-quarto-table-cell-role="th">E12_A3_T4_attempts</th>
-<th data-quarto-table-cell-role="th">E12_A3_T4_success</th>
-<th data-quarto-table-cell-role="th">E12_A3_T5_attempts</th>
-<th data-quarto-table-cell-role="th">E12_A3_T5_success</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td data-quarto-table-cell-role="th">0</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>...</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-<td>0.0</td>
-<td>No</td>
-</tr>
-<tr class="even">
-<td data-quarto-table-cell-role="th">0</td>
-<td>2.0</td>
 <td>No</td>
 <td>0.0</td>
 <td>No</td>
@@ -1272,7 +921,7 @@ E9_A3_T7</code></pre>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">0</td>
-<td>2.0</td>
+<td>0.0</td>
 <td>No</td>
 <td>0.0</td>
 <td>No</td>
@@ -1310,24 +959,24 @@ E9_A3_T7</code></pre>
 <section id="network-structure" class="level2">
 <h2 class="anchored" data-anchor-id="network-structure">Network structure</h2>
 <p>As the first step, we will build a network structure where we will specify nodes (or variables) and the relationship between those nodes. <a href="#fig-nx" class="quarto-xref">Figure&nbsp;2</a> shows a part of our network structure. We can see that the skill <code>expands and reduces common fractions</code> requires the skill of <code>understanding common fractions</code>. Also, these skills influence the number of attempts and success on tasks associated with them. For example, task <code>E1_A1_T1</code> is associated with <code>understanding common fractions</code>; a student with a strong hold on the skill is likely to respond to the task correctly with relatively a lesser number of attempts in comparison with another student with a weak understanding of that skill.</p>
-<div id="cell-fig-nx" class="cell" data-execution_count="163">
+<div id="cell-fig-nx" class="cell" data-execution_count="323">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyvis.network <span class="im">import</span> Network</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> nx.DiGraph()</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>g.add_edges_from([(<span class="st">'understanding common fractions'</span>,<span class="st">'expands and reduces common fractions'</span>),</span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">'understanding common fractions'</span>,<span class="st">'E1_A1_T1_attempts'</span>),</span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">'understanding common fractions'</span>,<span class="st">'E1_A1_T1_success'</span>),</span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">'expands and reduces common fractions'</span>,<span class="st">'E2_A1_T3_attempts'</span>),</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">'expands and reduces common fractions'</span>,<span class="st">'E2_A1_T3_success'</span>)])</span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>nx.draw(g, with_labels<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>plt.margins(x<span class="op">=</span><span class="fl">0.2</span>)</span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyvis.network <span class="im">import</span> Network</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>g <span class="op">=</span> nx.DiGraph()</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>g.add_edges_from([(<span class="st">'understanding common fractions'</span>,<span class="st">'expands and reduces common fractions'</span>),</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">'understanding common fractions'</span>,<span class="st">'E1_A1_T1_attempts'</span>),</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">'understanding common fractions'</span>,<span class="st">'E1_A1_T1_success'</span>),</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">'expands and reduces common fractions'</span>,<span class="st">'E2_A1_T3_attempts'</span>),</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>                  (<span class="st">'expands and reduces common fractions'</span>,<span class="st">'E2_A1_T3_success'</span>)])</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>nx.draw(g, with_labels<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>plt.margins(x<span class="op">=</span><span class="fl">0.4</span>)</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div id="fig-nx" class="quarto-figure quarto-figure-center quarto-float anchored">
@@ -1336,124 +985,108 @@ E9_A3_T7</code></pre>
 <img src="student_modeling_files/figure-html/fig-nx-output-1.png" class="img-fluid figure-img">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-nx-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: Partial structure of our network
+Figure&nbsp;2: Partial structure of the network
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<div id="d7e40072" class="cell" data-execution_count="176">
+<div id="d7e40072" class="cell" data-execution_count="220">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>skills_df <span class="op">=</span> pd.read_csv(<span class="st">'task_skills.csv'</span>)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>latent_variables <span class="op">=</span> [<span class="st">'understanding common fractions'</span>,</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>       <span class="st">'expands and reduces common fractions'</span>,</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>       <span class="st">'understanding algebraic fractions'</span>,</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>       <span class="st">'projecting operations of expanding and reducing common fractions'</span>,</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>       <span class="st">'expands and reduces algebraic fractions'</span>,</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>       <span class="st">'projecting operations of multiplication of common fractions'</span>,</span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>       <span class="st">'multiplies algebraic fractions'</span>, <span class="st">'divides algerbaic fractions'</span>,</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>       <span class="st">'adds and substracts of algebraic fractions'</span>,</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>       <span class="st">'projecting operations of adding common fractions'</span>,</span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">'II 5'</span>,<span class="st">'III 4'</span>,<span class="st">'III 5'</span>]</span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_task_skill(df, task):</span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co">        This function returns the learning outcome associated with the specified task.</span></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co">            df (DataFrame) : Pandas DataFrame object of logs data</span></span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a><span class="co">            task (str)     : Task for which to return learning outcome</span></span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a><span class="co">            </span></span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="co">            str: learning outcome</span></span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df.loc[df[<span class="st">'task_heirarchy'</span>] <span class="op">==</span> task, <span class="st">'learning_outcome'</span>].values[<span class="dv">0</span>]</span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a><span class="co"># preparing edges for Bayesian network</span></span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>edges <span class="op">=</span> []</span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> index <span class="kw">in</span> skills_df.index:</span>
-<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>    record <span class="op">=</span> skills_df.iloc[index].values</span>
-<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>    task <span class="op">=</span> record[<span class="dv">0</span>]</span>
-<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>    high_skill <span class="op">=</span> record[<span class="dv">1</span>]</span>
-<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>    high_skill <span class="op">=</span> high_skill.split(<span class="st">')'</span>)[<span class="dv">0</span>]</span>
-<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>    skill <span class="op">=</span> record[<span class="dv">2</span>]</span>
-<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>    task_attempts <span class="op">=</span> <span class="ss">f'</span><span class="sc">{</span>task<span class="sc">}</span><span class="ss">_attempts'</span></span>
-<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>    task_success <span class="op">=</span> <span class="ss">f'</span><span class="sc">{</span>task<span class="sc">}</span><span class="ss">_success'</span></span>
-<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> task_attempts <span class="kw">in</span> cols_to_remove <span class="kw">or</span> task_attempts <span class="kw">not</span> <span class="kw">in</span> df.columns <span class="kw">or</span> task_success <span class="kw">not</span> <span class="kw">in</span> df.columns:</span>
-<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">'Removing '</span>,task)</span>
-<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>        <span class="cf">continue</span></span>
-<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>    edges.append((high_skill, skill))</span>
-<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>    edges.append((skill, task_attempts))</span>
-<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>    edges.append((skill, task_success))</span>
-<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>    edges.append((task_attempts, task_success))</span>
-<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a><span class="co"># adding dependency from skill network</span></span>
-<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>edges_ <span class="op">=</span> <span class="bu">list</span>(<span class="bu">set</span>(edges))</span>
-<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'understanding common fractions'</span>,<span class="st">'expands and reduces common fractions'</span>))</span>
-<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'II 5'</span>,<span class="st">'III 4'</span>))</span>
-<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'II 5'</span>,<span class="st">'III 5'</span>))</span>
-<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'III 4'</span>,<span class="st">'III 5'</span>))</span>
-<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-62"><a href="#cb10-62" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'understanding algebraic fractions'</span>,<span class="st">'expands and reduces algebraic fractions'</span>))</span>
-<span id="cb10-63"><a href="#cb10-63" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'expands and reduces algebraic fractions'</span>, <span class="st">'adds and substracts of algebraic fractions'</span>))</span>
-<span id="cb10-64"><a href="#cb10-64" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'adds and substracts of algebraic fractions'</span>,<span class="st">'multiplies algebraic fractions'</span>))</span>
-<span id="cb10-65"><a href="#cb10-65" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'multiplies algebraic fractions'</span>,<span class="st">'divides algerbaic fractions'</span>))</span>
-<span id="cb10-66"><a href="#cb10-66" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'projecting operations of expanding and reducing common fractions'</span>, <span class="st">'projecting operations of multiplication of common fractions'</span>))</span>
-<span id="cb10-67"><a href="#cb10-67" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'projecting operations of multiplication of common fractions'</span>,<span class="st">'projecting operations of adding common fractions'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>skills_df <span class="op">=</span> pd.read_csv(<span class="st">'task_skills.csv'</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>latent_variables <span class="op">=</span> [<span class="st">'understanding common fractions'</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>       <span class="st">'expands and reduces common fractions'</span>,</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>       <span class="st">'understanding algebraic fractions'</span>,</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>       <span class="st">'projecting operations of expanding and reducing common fractions'</span>,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>       <span class="st">'expands and reduces algebraic fractions'</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>       <span class="st">'projecting operations of multiplication of common fractions'</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>       <span class="st">'multiplies algebraic fractions'</span>, <span class="st">'divides algerbaic fractions'</span>,</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>       <span class="st">'adds and substracts of algebraic fractions'</span>,</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>       <span class="st">'projecting operations of adding common fractions'</span>,</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">'II 5'</span>,<span class="st">'III 4'</span>,<span class="st">'III 5'</span>]</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_task_skill(df, task):</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co">        This function returns the learning outcome associated with the specified task.</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co">            df (DataFrame) : Pandas DataFrame object of logs data</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a><span class="co">            task (str)     : Task for which to return learning outcome</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="co">            </span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a><span class="co">        Returns:</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="co">            str: learning outcome</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="co">    </span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df.loc[df[<span class="st">'task_heirarchy'</span>] <span class="op">==</span> task, <span class="st">'learning_outcome'</span>].values[<span class="dv">0</span>]</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> print_full(cpd):</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="co">    Function to print full CPDs table.</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>    backup <span class="op">=</span> TabularCPD._truncate_strtable</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    TabularCPD._truncate_strtable <span class="op">=</span> <span class="kw">lambda</span> <span class="va">self</span>, x: x</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(cpd)</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>    TabularCPD._truncate_strtable <span class="op">=</span> backup</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a><span class="co"># preparing edges for Bayesian network</span></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>edges <span class="op">=</span> []</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> index <span class="kw">in</span> skills_df.index:</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>    record <span class="op">=</span> skills_df.iloc[index].values</span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>    task <span class="op">=</span> record[<span class="dv">0</span>]</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>    high_skill <span class="op">=</span> record[<span class="dv">1</span>]</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>    high_skill <span class="op">=</span> high_skill.split(<span class="st">')'</span>)[<span class="dv">0</span>]</span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>    skill <span class="op">=</span> record[<span class="dv">2</span>]</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>    task_attempts <span class="op">=</span> <span class="ss">f'</span><span class="sc">{</span>task<span class="sc">}</span><span class="ss">_attempts'</span></span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>    task_success <span class="op">=</span> <span class="ss">f'</span><span class="sc">{</span>task<span class="sc">}</span><span class="ss">_success'</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> task_attempts <span class="kw">in</span> cols_to_remove <span class="kw">or</span> task_attempts <span class="kw">not</span> <span class="kw">in</span> df.columns <span class="kw">or</span> task_success <span class="kw">not</span> <span class="kw">in</span> df.columns:</span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>        <span class="cf">continue</span></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>    edges.append((high_skill, skill))</span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>    edges.append((skill, task_attempts))</span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>    edges.append((skill, task_success))</span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a>    edges.append((task_attempts, task_success))</span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a><span class="co"># adding dependency from skill network</span></span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>edges_ <span class="op">=</span> <span class="bu">list</span>(<span class="bu">set</span>(edges))</span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'understanding common fractions'</span>,<span class="st">'expands and reduces common fractions'</span>))</span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'II 5'</span>,<span class="st">'III 4'</span>))</span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'II 5'</span>,<span class="st">'III 5'</span>))</span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'III 4'</span>,<span class="st">'III 5'</span>))</span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'understanding algebraic fractions'</span>,<span class="st">'expands and reduces algebraic fractions'</span>))</span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'expands and reduces algebraic fractions'</span>, <span class="st">'adds and substracts of algebraic fractions'</span>))</span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'adds and substracts of algebraic fractions'</span>,<span class="st">'multiplies algebraic fractions'</span>))</span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'multiplies algebraic fractions'</span>,<span class="st">'divides algerbaic fractions'</span>))</span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'projecting operations of expanding and reducing common fractions'</span>, <span class="st">'projecting operations of multiplication of common fractions'</span>))</span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'projecting operations of multiplication of common fractions'</span>,<span class="st">'projecting operations of adding common fractions'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
-<div class="cell-output cell-output-stdout">
-<pre><code>Removing  E1_A1_T2
-Removing  E2_A1_T3
-Removing  E2_A2_T2
-Removing  E2_A2_T3
-Removing  E3_A1_T1
-Removing  E3_A2_T3
-Removing  E4_A1_T1
-Removing  E5_A3_T1
-Removing  E5_A3_T2
-Removing  E5_A3_T3
-Removing  E7_A2_T3
-Removing  E9_A1_T5
-Removing  E9_A2_T6
-Removing  E9_A2_T2
-Removing  E9_A2_T3
-Removing  E9_A3_T1
-Removing  E9_A3_T2
-Removing  E9_A3_T3
-Removing  E9_A3_T4
-Removing  E9_A3_T5
-Removing  E9_A3_T6
-Removing  E9_A3_T7</code></pre>
 </div>
-</div>
-<p><a href="#fig-complete" class="quarto-xref">Figure&nbsp;3</a> shows the complete structure of our network.</p>
-<div id="cell-fig-complete" class="cell" data-execution_count="177">
+<p>Let’s have a look on the complete network. <a href="#fig-complete" class="quarto-xref">Figure&nbsp;3</a> shows the complete structure of our network.</p>
+<div id="cell-fig-complete" class="cell" data-execution_count="202">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>nx_graph <span class="op">=</span> nx.DiGraph()</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>nx_graph.add_edges_from(edges_)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>nt <span class="op">=</span> Network(<span class="st">'800px'</span>, <span class="st">'1000px'</span>,notebook<span class="op">=</span><span class="va">True</span>,directed <span class="op">=</span><span class="va">True</span>,cdn_resources<span class="op">=</span><span class="st">'in_line'</span>)</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># populates the nodes and edges data structures</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>nt.from_nx(nx_graph)</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>nt.show(<span class="st">'nx.html'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>nx_graph <span class="op">=</span> nx.DiGraph()</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>nx_graph.add_edges_from(edges_)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>nt <span class="op">=</span> Network(<span class="st">'800px'</span>, <span class="st">'1000px'</span>,notebook<span class="op">=</span><span class="va">True</span>,directed <span class="op">=</span><span class="va">True</span>,cdn_resources<span class="op">=</span><span class="st">'in_line'</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># populates the nodes and edges data structures</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>nt.from_nx(nx_graph)</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>nt.show(<span class="st">'nx.html'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>Warning: When  cdn_resources is 'local' jupyter notebook has issues displaying graphics on chrome/safari. Use cdn_resources='in_line' or cdn_resources='remote' if you have issues viewing graphics in a notebook.
-nx.html</code></pre>
+<pre><code>nx.html</code></pre>
 </div>
-<div id="fig-complete" class="cell-output cell-output-display quarto-figure quarto-figure-center quarto-float anchored" data-execution_count="177">
+<div id="fig-complete" class="cell-output cell-output-display quarto-figure quarto-figure-center quarto-float anchored" data-execution_count="202">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-complete-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 
@@ -1469,206 +1102,188 @@ Figure&nbsp;3: Complete network structure
 </section>
 <section id="estimating-probabilities-for-skills" class="level2">
 <h2 class="anchored" data-anchor-id="estimating-probabilities-for-skills">Estimating probabilities for skills</h2>
-<p>Now, we will use our network structure and apply an estimation algorithm, i.e., Expectation Maximization (EM). The EM algorithm can be used with latent variables to learn their probabilities.</p>
-<div id="ddc00cbc" class="cell" data-execution_count="198">
+<p>Now, we will use our network structure and apply an estimation algorithm, i.e., Expectation Maximization (EM). The EM algorithm could be used in cases when the network involves some latent variables (or variables for which data is not available) to learn their probabilities.</p>
+<p>The following code applies the EM algorithm and learn probabilities. Some of those probabilities are shown below.</p>
+<div id="3905878c" class="cell" data-execution_count="326">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pgmpy.models <span class="im">import</span> BayesianNetwork</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pgmpy.estimators <span class="im">import</span> ExpectationMaximization <span class="im">as</span> EM</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pgmpy.factors.discrete.CPD <span class="im">import</span> TabularCPD</span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co"># building bayesian network</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>new_G <span class="op">=</span> BayesianNetwork(edges_, latents<span class="op">=</span>{<span class="st">'understanding common fractions'</span>,</span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>       <span class="st">'expands and reduces common fractions'</span>,</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>       <span class="st">'understanding algebraic fractions'</span>,</span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>       <span class="st">'projecting operations of expanding and reducing common fractions'</span>,</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>       <span class="st">'expands and reduces algebraic fractions'</span>,</span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>       <span class="st">'projecting operations of multiplication of common fractions'</span>,</span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>       <span class="st">'multiplies algebraic fractions'</span>, <span class="st">'divides algerbaic fractions'</span>,</span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>       <span class="st">'adds and substracts of algebraic fractions'</span>,</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>       <span class="st">'projecting operations of adding common fractions'</span>,</span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">'II 5'</span>,<span class="st">'III 4'</span>,<span class="st">'III 5'</span>})</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a><span class="co"># initializing EM estimator</span></span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>estimator <span class="op">=</span> EM(new_G, df_)</span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co"># estimating parameters</span></span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>all_cpds <span class="op">=</span> estimator.get_parameters(max_iter<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output cell-output-display">
-<script type="application/vnd.jupyter.widget-view+json">
-{"model_id":"2bf8bedef791471fbe0fbd9d3a42b2d9","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
-</script>
-</div>
-</div>
-<div id="c0f98175" class="cell">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>Now, we have our probabilities <span class="cf">for</span> our skills learned <span class="im">from</span> the log data. These are shown below.</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div id="15699cf4" class="cell" data-execution_count="201">
-<details class="code-fold">
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> print_full(cpd):</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    backup <span class="op">=</span> TabularCPD._truncate_strtable</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    TabularCPD._truncate_strtable <span class="op">=</span> <span class="kw">lambda</span> <span class="va">self</span>, x: x</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(cpd)</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    TabularCPD._truncate_strtable <span class="op">=</span> backup</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> cpd <span class="kw">in</span> all_cpds:</span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    v <span class="op">=</span> cpd.variable</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> v <span class="kw">in</span> latent_variables:</span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">'</span><span class="ch">\n</span><span class="st">'</span>,cpd.variable)</span>
-<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="st">'============='</span>)</span>
-<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>        print_full(cpd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pgmpy.models <span class="im">import</span> BayesianNetwork</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> networkx <span class="im">as</span> nx</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pgmpy.estimators <span class="im">import</span> ExpectationMaximization <span class="im">as</span> EM</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pgmpy.factors.discrete.CPD <span class="im">import</span> TabularCPD</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co"># building bayesian network</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>new_G <span class="op">=</span> BayesianNetwork(edges_, latents<span class="op">=</span>{<span class="st">'understanding common fractions'</span>,</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>       <span class="st">'expands and reduces common fractions'</span>,</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>       <span class="st">'understanding algebraic fractions'</span>,</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>       <span class="st">'projecting operations of expanding and reducing common fractions'</span>,</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>       <span class="st">'expands and reduces algebraic fractions'</span>,</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>       <span class="st">'projecting operations of multiplication of common fractions'</span>,</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>       <span class="st">'multiplies algebraic fractions'</span>, <span class="st">'divides algerbaic fractions'</span>,</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>       <span class="st">'adds and substracts of algebraic fractions'</span>,</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>       <span class="st">'projecting operations of adding common fractions'</span>,</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>        <span class="st">'II 5'</span>,<span class="st">'III 4'</span>,<span class="st">'III 5'</span>})</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co"># initializing EM estimator</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>estimator <span class="op">=</span> EM(new_G, df_)</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a><span class="co"># estimating parameters</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>all_cpds <span class="op">=</span> estimator.get_parameters(max_iter<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>print_full(all_cpds[<span class="dv">0</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>
- projecting operations of expanding and reducing common fractions
-=============
-+---------------------------------------------------------------------+---------------------+---------------------+
-| III 4                                                               | III 4(0)            | III 4(1)            |
-+---------------------------------------------------------------------+---------------------+---------------------+
-| projecting operations of expanding and reducing common fractions(0) | 0.7494738672411839  | 0.5902968258667194  |
-+---------------------------------------------------------------------+---------------------+---------------------+
-| projecting operations of expanding and reducing common fractions(1) | 0.25052613275881597 | 0.40970317413328067 |
-+---------------------------------------------------------------------+---------------------+---------------------+
-
- divides algerbaic fractions
-=============
-+--------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+
-| III 5                          | III 5(0)                          | III 5(0)                          | III 5(1)                          | III 5(1)                          |
-+--------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+
-| multiplies algebraic fractions | multiplies algebraic fractions(0) | multiplies algebraic fractions(1) | multiplies algebraic fractions(0) | multiplies algebraic fractions(1) |
-+--------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+
-| divides algerbaic fractions(0) | 0.02386591384846834               | 0.41801638198374025               | 0.09971273204381455               | 0.2312903436754715                |
-+--------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+
-| divides algerbaic fractions(1) | 0.9761340861515316                | 0.5819836180162596                | 0.9002872679561854                | 0.7687096563245285                |
-+--------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+
-
- adds and substracts of algebraic fractions
-=============
-+-----------------------------------------------+--------------------------------------------+--------------------------------------------+--------------------------------------------+--------------------------------------------+
-| III 5                                         | III 5(0)                                   | III 5(0)                                   | III 5(1)                                   | III 5(1)                                   |
-+-----------------------------------------------+--------------------------------------------+--------------------------------------------+--------------------------------------------+--------------------------------------------+
-| expands and reduces algebraic fractions       | expands and reduces algebraic fractions(0) | expands and reduces algebraic fractions(1) | expands and reduces algebraic fractions(0) | expands and reduces algebraic fractions(1) |
-+-----------------------------------------------+--------------------------------------------+--------------------------------------------+--------------------------------------------+--------------------------------------------+
-| adds and substracts of algebraic fractions(0) | 0.6125142227829531                         | 0.3017138636774878                         | 0.888377311068268                          | 0.719659004271239                          |
-+-----------------------------------------------+--------------------------------------------+--------------------------------------------+--------------------------------------------+--------------------------------------------+
-| adds and substracts of algebraic fractions(1) | 0.38748577721704686                        | 0.6982861363225121                         | 0.11162268893173202                        | 0.280340995728761                          |
-+-----------------------------------------------+--------------------------------------------+--------------------------------------------+--------------------------------------------+--------------------------------------------+
-
- expands and reduces common fractions
-=============
-+-----------------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+
-| II 5                                    | II 5(0)                           | II 5(0)                           | II 5(1)                           | II 5(1)                           |
-+-----------------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+
-| understanding common fractions          | understanding common fractions(0) | understanding common fractions(1) | understanding common fractions(0) | understanding common fractions(1) |
-+-----------------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+
-| expands and reduces common fractions(0) | 0.4971784673726968                | 0.8799497794636845                | 0.29688251965672935               | 0.3688393093212617                |
-+-----------------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+
-| expands and reduces common fractions(1) | 0.5028215326273032                | 0.12005022053631542               | 0.7031174803432706                | 0.6311606906787384                |
-+-----------------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+-----------------------------------+
-
- understanding algebraic fractions
-=============
-+--------------------------------------+---------------------+--------------------+
-| III 4                                | III 4(0)            | III 4(1)           |
-+--------------------------------------+---------------------+--------------------+
-| understanding algebraic fractions(0) | 0.744788662946919   | 0.6222785170824062 |
-+--------------------------------------+---------------------+--------------------+
-| understanding algebraic fractions(1) | 0.25521133705308097 | 0.3777214829175937 |
-+--------------------------------------+---------------------+--------------------+
-
- II 5
-=============
-+---------+----------+
-| II 5(0) | 0.643554 |
-+---------+----------+
-| II 5(1) | 0.356446 |
-+---------+----------+
-
- multiplies algebraic fractions
-=============
-+--------------------------------------------+-----------------------------------------------+-----------------------------------------------+-----------------------------------------------+-----------------------------------------------+
-| III 5                                      | III 5(0)                                      | III 5(0)                                      | III 5(1)                                      | III 5(1)                                      |
-+--------------------------------------------+-----------------------------------------------+-----------------------------------------------+-----------------------------------------------+-----------------------------------------------+
-| adds and substracts of algebraic fractions | adds and substracts of algebraic fractions(0) | adds and substracts of algebraic fractions(1) | adds and substracts of algebraic fractions(0) | adds and substracts of algebraic fractions(1) |
-+--------------------------------------------+-----------------------------------------------+-----------------------------------------------+-----------------------------------------------+-----------------------------------------------+
-| multiplies algebraic fractions(0)          | 0.5188623887745587                            | 0.6815297712943498                            | 0.41386209798445317                           | 0.7152311956541716                            |
-+--------------------------------------------+-----------------------------------------------+-----------------------------------------------+-----------------------------------------------+-----------------------------------------------+
-| multiplies algebraic fractions(1)          | 0.48113761122544135                           | 0.3184702287056503                            | 0.5861379020155468                            | 0.2847688043458284                            |
-+--------------------------------------------+-----------------------------------------------+-----------------------------------------------+-----------------------------------------------+-----------------------------------------------+
-
- projecting operations of adding common fractions
-=============
-+-------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+
-| III 4                                                       | III 4(0)                                                       | III 4(0)                                                       | III 4(1)                                                       | III 4(1)                                                       |
-+-------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+
-| projecting operations of multiplication of common fractions | projecting operations of multiplication of common fractions(0) | projecting operations of multiplication of common fractions(1) | projecting operations of multiplication of common fractions(0) | projecting operations of multiplication of common fractions(1) |
-+-------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+
-| projecting operations of adding common fractions(0)         | 0.7927767373027053                                             | 0.052445309947635736                                           | 0.7726546726835963                                             | 0.8001375417436695                                             |
-+-------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+
-| projecting operations of adding common fractions(1)         | 0.20722326269729466                                            | 0.9475546900523643                                             | 0.22734532731640364                                            | 0.19986245825633053                                            |
-+-------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+----------------------------------------------------------------+
-
- III 5
-=============
-+----------+---------------------+--------------------+---------------------+---------------------+
-| II 5     | II 5(0)             | II 5(0)            | II 5(1)             | II 5(1)             |
-+----------+---------------------+--------------------+---------------------+---------------------+
-| III 4    | III 4(0)            | III 4(1)           | III 4(0)            | III 4(1)            |
-+----------+---------------------+--------------------+---------------------+---------------------+
-| III 5(0) | 0.39932268286608946 | 0.7019768891251945 | 0.04303156881672869 | 0.30376319006718094 |
-+----------+---------------------+--------------------+---------------------+---------------------+
-| III 5(1) | 0.6006773171339106  | 0.2980231108748055 | 0.9569684311832714  | 0.6962368099328191  |
-+----------+---------------------+--------------------+---------------------+---------------------+
-
- expands and reduces algebraic fractions
-=============
-+--------------------------------------------+--------------------------------------+--------------------------------------+--------------------------------------+--------------------------------------+
-| III 5                                      | III 5(0)                             | III 5(0)                             | III 5(1)                             | III 5(1)                             |
-+--------------------------------------------+--------------------------------------+--------------------------------------+--------------------------------------+--------------------------------------+
-| understanding algebraic fractions          | understanding algebraic fractions(0) | understanding algebraic fractions(1) | understanding algebraic fractions(0) | understanding algebraic fractions(1) |
-+--------------------------------------------+--------------------------------------+--------------------------------------+--------------------------------------+--------------------------------------+
-| expands and reduces algebraic fractions(0) | 0.018824154596772086                 | 0.11595852642137806                  | 0.015329283167732771                 | 0.2402182179964657                   |
-+--------------------------------------------+--------------------------------------+--------------------------------------+--------------------------------------+--------------------------------------+
-| expands and reduces algebraic fractions(1) | 0.9811758454032279                   | 0.884041473578622                    | 0.9846707168322673                   | 0.7597817820035343                   |
-+--------------------------------------------+--------------------------------------+--------------------------------------+--------------------------------------+--------------------------------------+
-
- III 4
-=============
-+----------+---------------------+---------------------+
-| II 5     | II 5(0)             | II 5(1)             |
-+----------+---------------------+---------------------+
-| III 4(0) | 0.34984002231434896 | 0.35812789434538655 |
-+----------+---------------------+---------------------+
-| III 4(1) | 0.650159977685651   | 0.6418721056546135  |
-+----------+---------------------+---------------------+
-
- projecting operations of multiplication of common fractions
-=============
-+------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+
-| III 4                                                            | III 4(0)                                                            | III 4(0)                                                            | III 4(1)                                                            | III 4(1)                                                            |
-+------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+
-| projecting operations of expanding and reducing common fractions | projecting operations of expanding and reducing common fractions(0) | projecting operations of expanding and reducing common fractions(1) | projecting operations of expanding and reducing common fractions(0) | projecting operations of expanding and reducing common fractions(1) |
-+------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+
-| projecting operations of multiplication of common fractions(0)   | 0.03150929049438947                                                 | 0.9776846976468124                                                  | 0.03677004481066036                                                 | 0.22141347966604585                                                 |
-+------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+
-| projecting operations of multiplication of common fractions(1)   | 0.9684907095056106                                                  | 0.022315302353187544                                                | 0.9632299551893396                                                  | 0.7785865203339541                                                  |
-+------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+---------------------------------------------------------------------+
-
- understanding common fractions
-=============
-+-----------------------------------+---------------------+---------------------+
-| II 5                              | II 5(0)             | II 5(1)             |
-+-----------------------------------+---------------------+---------------------+
-| understanding common fractions(0) | 0.25140098267644934 | 0.49650797145292713 |
-+-----------------------------------+---------------------+---------------------+
-| understanding common fractions(1) | 0.7485990173235506  | 0.5034920285470729  |
-+-----------------------------------+---------------------+---------------------+</code></pre>
+<pre><code>+-----------------------------------+--------------------------------------+--------------------------------------+
+| understanding algebraic fractions | understanding algebraic fractions(0) | understanding algebraic fractions(1) |
++-----------------------------------+--------------------------------------+--------------------------------------+
+| E3_A3_T1_attempts(0.0)            | 0.5745202455693615                   | 0.35173965103039506                  |
++-----------------------------------+--------------------------------------+--------------------------------------+
+| E3_A3_T1_attempts(1.0)            | 0.1720550077738612                   | 0.4050739890829306                   |
++-----------------------------------+--------------------------------------+--------------------------------------+
+| E3_A3_T1_attempts(2.0)            | 0.2534247466567772                   | 0.2431863598866744                   |
++-----------------------------------+--------------------------------------+--------------------------------------+</code></pre>
+</div>
+</div>
+</section>
+<section id="assigning-learned-probabilities-to-the-bayesian-network" class="level2">
+<h2 class="anchored" data-anchor-id="assigning-learned-probabilities-to-the-bayesian-network">Assigning learned probabilities to the Bayesian network</h2>
+<p>As we have probabilities learned from the log data using <strong>Expectation Maximization</strong> algorithm, we will use them to initialize our Bayesian network. Now, this network can be used for inference purposes.</p>
+<div id="6f9c1927" class="cell" data-execution_count="328">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>bayes <span class="op">=</span> new_G</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="co"># setting conditional probabilities</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> cpd <span class="kw">in</span> all_cpds:</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    bayes.add_cpds(cpd)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</section>
+<section id="performing-inference-using-the-network" class="level2">
+<h2 class="anchored" data-anchor-id="performing-inference-using-the-network">Performing inference using the network</h2>
+<p>Now we will use our network to infer probabilities for different skills given a student’s interaction data with some tasks. For this illustration, we will use interaction data from all the tasks from the trajectory. This should be noted that partial interaction data can also be used. For example, interaction with a single task or activity.</p>
+<section id="visualizing-the-network-with-probabilities" class="level3">
+<h3 class="anchored" data-anchor-id="visualizing-the-network-with-probabilities">Visualizing the network with probabilities</h3>
+<p>For an intuitive interpretation of the resultant probabilities for skills, we will now plot the network with the probabilities updated according to the student’s interaction to the tasks.</p>
+<p>Let’s use interaction data of a particular student with id <code>Peetri kooli kasutaja 56</code>. We will first obtain the probabilities for different skills given the student’s interaction, and then we will plot the network with the obtained probabilities as the <strong>color of the nodes</strong>.</p>
+<p><a href="#fig-student" class="quarto-xref">Figure&nbsp;4</a> and <a href="#fig-student1" class="quarto-xref">Figure&nbsp;5</a> below show the networks for two different students.</p>
+<div id="a45fec69" class="cell" data-execution_count="317">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pgmpy.inference <span class="im">import</span> VariableElimination</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>df_student <span class="op">=</span> df_.copy()</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>df_student.reset_index(inplace<span class="op">=</span><span class="va">True</span>, drop<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># fetching a student's record</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> show_prob_for_student(<span class="bu">id</span>, bayes):</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">        This function prints probabilities for a particular student.</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">        </span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co">        Args:</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co">            id (int): index of student in the log dataset</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co">            bayes (BayesianNetwork): Bayesian network (from pgmpy)</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co">    """</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">#print('Student ID:',data.iloc[id,0])</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># inititing inference engine</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    infer <span class="op">=</span> VariableElimination(bayes)</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># accessing student record</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>    student_record <span class="op">=</span> df_student.iloc[<span class="bu">id</span>].to_dict()</span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>    <span class="co">#removing task which were not added to the network</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>    evidence <span class="op">=</span> {}</span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> key, value <span class="kw">in</span> student_record.items():</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> key <span class="kw">in</span> bayes.nodes():</span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>            evidence[key] <span class="op">=</span> value</span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>    <span class="co"># creating a network for student</span></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>    student_graph <span class="op">=</span> nx.DiGraph()</span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>    edges <span class="op">=</span> []</span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> index <span class="kw">in</span> skills_df.index:</span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>        record <span class="op">=</span> skills_df.iloc[index].values</span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>        task <span class="op">=</span> record[<span class="dv">0</span>]</span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>        high_skill <span class="op">=</span> record[<span class="dv">1</span>]</span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>        high_skill <span class="op">=</span> high_skill.split(<span class="st">')'</span>)[<span class="dv">0</span>]</span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>        skill <span class="op">=</span> record[<span class="dv">2</span>]</span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a>        edges.append((high_skill, skill))</span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a>    <span class="co"># adding dependency from skill network</span></span>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a>    edges_ <span class="op">=</span> <span class="bu">list</span>(<span class="bu">set</span>(edges))</span>
+<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a>    edges_.append((<span class="st">'understanding common fractions'</span>,<span class="st">'expands and reduces common fractions'</span>))</span>
+<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a>    edges_.append((<span class="st">'II 5'</span>,<span class="st">'III 4'</span>))</span>
+<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a>    edges_.append((<span class="st">'II 5'</span>,<span class="st">'III 5'</span>))</span>
+<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a>    edges_.append((<span class="st">'III 4'</span>,<span class="st">'III 5'</span>))</span>
+<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>    edges_.append((<span class="st">'understanding algebraic fractions'</span>,<span class="st">'expands and reduces algebraic fractions'</span>))</span>
+<span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a>    edges_.append((<span class="st">'expands and reduces algebraic fractions'</span>, <span class="st">'adds and substracts of algebraic fractions'</span>))</span>
+<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a>    edges_.append((<span class="st">'adds and substracts of algebraic fractions'</span>,<span class="st">'multiplies algebraic fractions'</span>))</span>
+<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a>    edges_.append((<span class="st">'multiplies algebraic fractions'</span>,<span class="st">'divides algerbaic fractions'</span>))</span>
+<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a>    edges_.append((<span class="st">'projecting operations of expanding and reducing common fractions'</span>, <span class="st">'projecting operations of multiplication of common fractions'</span>))</span>
+<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a>    edges_.append((<span class="st">'projecting operations of multiplication of common fractions'</span>,<span class="st">'projecting operations of adding common fractions'</span>))</span>
+<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a>    <span class="co"># adding edges to the network</span></span>
+<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a>    student_graph.add_edges_from(edges_)</span>
+<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a>    alpha_map <span class="op">=</span> []</span>
+<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-63"><a href="#cb13-63" aria-hidden="true" tabindex="-1"></a>    <span class="co"># performing inference</span></span>
+<span id="cb13-64"><a href="#cb13-64" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-65"><a href="#cb13-65" aria-hidden="true" tabindex="-1"></a>    <span class="co"># using proabilities as alpha values for node color</span></span>
+<span id="cb13-66"><a href="#cb13-66" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> skill <span class="kw">in</span> student_graph.nodes():  </span>
+<span id="cb13-67"><a href="#cb13-67" aria-hidden="true" tabindex="-1"></a>        prob <span class="op">=</span> infer.query([skill], evidence<span class="op">=</span>evidence)    </span>
+<span id="cb13-68"><a href="#cb13-68" aria-hidden="true" tabindex="-1"></a>        alpha_map.append(prob.values[<span class="dv">1</span>])</span>
+<span id="cb13-69"><a href="#cb13-69" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb13-70"><a href="#cb13-70" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">8</span>))</span>
+<span id="cb13-71"><a href="#cb13-71" aria-hidden="true" tabindex="-1"></a>    pos <span class="op">=</span> nx.fruchterman_reingold_layout(student_graph)</span>
+<span id="cb13-72"><a href="#cb13-72" aria-hidden="true" tabindex="-1"></a>    nx.draw_networkx_nodes(student_graph,pos,node_color<span class="op">=</span><span class="st">'green'</span>,alpha<span class="op">=</span>alpha_map)</span>
+<span id="cb13-73"><a href="#cb13-73" aria-hidden="true" tabindex="-1"></a>    nx.draw_networkx_labels(student_graph, pos, font_size<span class="op">=</span><span class="dv">8</span>)</span>
+<span id="cb13-74"><a href="#cb13-74" aria-hidden="true" tabindex="-1"></a>    nx.draw_networkx_edges(student_graph, pos, edgelist<span class="op">=</span>edges_, arrows<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb13-75"><a href="#cb13-75" aria-hidden="true" tabindex="-1"></a>    plt.margins(x<span class="op">=</span><span class="fl">0.4</span>)</span>
+<span id="cb13-76"><a href="#cb13-76" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="ss">f'Network for </span><span class="sc">{</span>data<span class="sc">.</span>iloc[<span class="bu">id</span>,<span class="dv">0</span>]<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb13-77"><a href="#cb13-77" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
+<span id="cb13-78"><a href="#cb13-78" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+<div id="cell-fig-student" class="cell" data-execution_count="320">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>show_prob_for_student(<span class="dv">2</span>, bayes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-student" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-student-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="student_modeling_files/figure-html/fig-student-output-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-student-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;4: Bayesian network for Kasutaja 57
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<div id="cell-fig-student1" class="cell" data-execution_count="332">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>show_prob_for_student(<span class="dv">10</span>, bayes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-display">
+<div id="fig-student1" class="quarto-figure quarto-figure-center quarto-float anchored">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-student1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="student_modeling_files/figure-html/fig-student1-output-1.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-student1-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;5: Bayesian network for Kasutaja 65
+</figcaption>
+</figure>
+</div>
 </div>
 </div>
 
@@ -1676,6 +1291,7 @@ Figure&nbsp;3: Complete network structure
 <div class="hidden" aria-hidden="true">
 <span class="glightbox-desc lightbox-desc-1">Figure&nbsp;1: Skills structure</span>
 </div>
+</section>
 </section>
 </section>
 
@@ -2068,7 +1684,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"selector":".lightbox","closeEffect":"zoom","descPosition":"bottom","loop":false,"openEffect":"zoom"});
+<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","selector":".lightbox","loop":false,"descPosition":"bottom","closeEffect":"zoom"});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;
