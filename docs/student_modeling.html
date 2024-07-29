@@ -154,20 +154,20 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#dataset" id="toc-dataset" class="nav-link active" data-scroll-target="#dataset">Dataset</a>
+  <li><a href="#dataset" id="toc-dataset" class="nav-link active" data-scroll-target="#dataset"><span class="header-section-number">1</span> Dataset</a>
   <ul class="collapse">
-  <li><a href="#log-dataset" id="toc-log-dataset" class="nav-link" data-scroll-target="#log-dataset">Log dataset</a></li>
-  <li><a href="#skill-dataset" id="toc-skill-dataset" class="nav-link" data-scroll-target="#skill-dataset">Skill dataset</a></li>
+  <li><a href="#log-dataset" id="toc-log-dataset" class="nav-link" data-scroll-target="#log-dataset"><span class="header-section-number">1.1</span> Log dataset</a></li>
+  <li><a href="#skill-dataset" id="toc-skill-dataset" class="nav-link" data-scroll-target="#skill-dataset"><span class="header-section-number">1.2</span> Skill dataset</a></li>
   </ul></li>
-  <li><a href="#pre-processing-data" id="toc-pre-processing-data" class="nav-link" data-scroll-target="#pre-processing-data">Pre-processing data</a></li>
-  <li><a href="#buidling-a-bayesian-network" id="toc-buidling-a-bayesian-network" class="nav-link" data-scroll-target="#buidling-a-bayesian-network">Buidling a Bayesian network</a>
+  <li><a href="#pre-processing-data" id="toc-pre-processing-data" class="nav-link" data-scroll-target="#pre-processing-data"><span class="header-section-number">2</span> Pre-processing data</a></li>
+  <li><a href="#buidling-a-bayesian-network" id="toc-buidling-a-bayesian-network" class="nav-link" data-scroll-target="#buidling-a-bayesian-network"><span class="header-section-number">3</span> Buidling a Bayesian network</a>
   <ul class="collapse">
-  <li><a href="#network-structure" id="toc-network-structure" class="nav-link" data-scroll-target="#network-structure">Network structure</a></li>
-  <li><a href="#estimating-probabilities-for-skills" id="toc-estimating-probabilities-for-skills" class="nav-link" data-scroll-target="#estimating-probabilities-for-skills">Estimating probabilities for skills</a></li>
-  <li><a href="#assigning-learned-probabilities-to-the-bayesian-network" id="toc-assigning-learned-probabilities-to-the-bayesian-network" class="nav-link" data-scroll-target="#assigning-learned-probabilities-to-the-bayesian-network">Assigning learned probabilities to the Bayesian network</a></li>
-  <li><a href="#performing-inference-using-the-network" id="toc-performing-inference-using-the-network" class="nav-link" data-scroll-target="#performing-inference-using-the-network">Performing inference using the network</a>
+  <li><a href="#network-structure" id="toc-network-structure" class="nav-link" data-scroll-target="#network-structure"><span class="header-section-number">3.1</span> Network structure</a></li>
+  <li><a href="#estimating-probabilities-for-skills" id="toc-estimating-probabilities-for-skills" class="nav-link" data-scroll-target="#estimating-probabilities-for-skills"><span class="header-section-number">3.2</span> Estimating probabilities for skills</a></li>
+  <li><a href="#assigning-learned-probabilities-to-the-bayesian-network" id="toc-assigning-learned-probabilities-to-the-bayesian-network" class="nav-link" data-scroll-target="#assigning-learned-probabilities-to-the-bayesian-network"><span class="header-section-number">3.3</span> Assigning learned probabilities to the Bayesian network</a></li>
+  <li><a href="#performing-inference-using-the-network" id="toc-performing-inference-using-the-network" class="nav-link" data-scroll-target="#performing-inference-using-the-network"><span class="header-section-number">3.4</span> Performing inference using the network</a>
   <ul class="collapse">
-  <li><a href="#visualizing-the-network-with-probabilities" id="toc-visualizing-the-network-with-probabilities" class="nav-link" data-scroll-target="#visualizing-the-network-with-probabilities">Visualizing the network with probabilities</a></li>
+  <li><a href="#visualizing-the-network-with-probabilities" id="toc-visualizing-the-network-with-probabilities" class="nav-link" data-scroll-target="#visualizing-the-network-with-probabilities"><span class="header-section-number">3.4.1</span> Visualizing the network with probabilities</a></li>
   </ul></li>
   </ul></li>
   </ul>
@@ -213,11 +213,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 
 <p>This post is in continuation with the <a href="https://pankajchejara23.github.io/open-learner-modeling/">previous post</a> which presented a preliminary idea on <strong>building open learner models using Bayesian networks</strong>. The last post used the vara dataset partly and analyzed that data with some synthetically generated skill-related data. This post extends that idea with the <strong>vara dataset and actual skill-related dataset</strong>.</p>
-<section id="dataset" class="level1">
-<h1>Dataset</h1>
-<p>Our dataset include two seperate CSV files: one for log interaction data and another for task to skill mapping. These two datasets are explained in details below.</p>
-<section id="log-dataset" class="level2">
-<h2 class="anchored" data-anchor-id="log-dataset">Log dataset</h2>
+<section id="dataset" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Dataset</h1>
+<p>Our dataset includes two separate CSV files: one for log interaction data and another for task-to-skill mapping. These two datasets are explained in detail below.</p>
+<section id="log-dataset" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="log-dataset"><span class="header-section-number">1.1</span> Log dataset</h2>
 <p>We have a dataset that captured students’ interactions with the Vara platform. This dataset contains information such as number of attempts taken by a student, whether the student answered correctly or not, etc. The dataset has such information for several tasks which are grouped into activities. A sample of the dataset is shown below.</p>
 <div id="5cd2ac8d" class="cell" data-execution_count="39">
 <details class="code-fold">
@@ -389,8 +389,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="skill-dataset" class="level2">
-<h2 class="anchored" data-anchor-id="skill-dataset">Skill dataset</h2>
+<section id="skill-dataset" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="skill-dataset"><span class="header-section-number">1.2</span> Skill dataset</h2>
 <p>Additionally, we have also mapping data for each task to one or more skills. For example, a task is associated with the skill <code>understanding common fractions</code> which is part of a high-level skill <code>II 5) reducing and expanding common fractions; adding, subtracting, multiplying and dividing two common fractions</code>.</p>
 <div id="ce53b1b7" class="cell" data-execution_count="41">
 <details class="code-fold">
@@ -450,13 +450,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
-<p>As the skills presented above have dependencies on other skills, we will use that knowledge while building knowledge network structure.</p>
+<p>As the skills presented above depend on other skills, we will use that knowledge while building a knowledge network structure.</p>
 <p>The <a href="#fig-skills" class="quarto-xref">Figure&nbsp;1</a> presents that dependency structure among skills and it also breaks down skills at finer level. Please <strong>don’t feel overwhelmed</strong> by the amount of information presented in the figure. This is just to provide an example of a dependency structure. We will use only some part of the information from this figure (we will discuss it in detail later).</p>
 <p><strong>As an example</strong>, we can see that <code>II 5) reducing and expanding common fractions; adding, subtracting, multiplying and dividing two common fractions</code> has several skills and one of them is <code>understanding common fractions</code> which is a pre-requisite for another skill <code>expanding and reducing common fractions</code>.</p>
 <div id="fig-skills" class="lightbox quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-skills-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<a href="cmap.jpg" class="lightbox" data-gallery="quarto-lightbox-gallery-1" data-glightbox="description: .lightbox-desc-1"><img src="cmap.jpg" class="img-fluid figure-img"></a>
+<a href="cmap.jpg" class="lightbox" data-glightbox="description: .lightbox-desc-1" data-gallery="quarto-lightbox-gallery-1"><img src="cmap.jpg" class="img-fluid figure-img"></a>
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-skills-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figure&nbsp;1: Skills structure
@@ -465,9 +465,9 @@ Figure&nbsp;1: Skills structure
 </div>
 </section>
 </section>
-<section id="pre-processing-data" class="level1">
-<h1>Pre-processing data</h1>
-<p><strong>Using number of attempts and success features</strong>: For this example, we are going to use two types of features: 1) number of attempts and 2) success. The first feature captures the number of times a student interacted with a particular task. While the second feature shows whether the response was correct or not.</p>
+<section id="pre-processing-data" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Pre-processing data</h1>
+<p><strong>Using the number of attempts and success features</strong>: For this example, we are going to use two types of features: 1) number of attempts and 2) success. The first feature captures the number of times a student interacted with a particular task. The second feature shows whether the response was correct or not.</p>
 <div id="dc130882" class="cell" data-execution_count="193">
 <details class="code-fold">
 <summary>Code</summary>
@@ -730,7 +730,7 @@ Figure&nbsp;1: Skills structure
 </div>
 </div>
 <p><strong>Removing tasks of no interaction data</strong>: Next, we will remove tasks with no interaction data. There are a few tasks in the instructional trajectory where no students interacted with. Before proceeding to the modeling step, we will remove all such tasks. The following tasks are the ones we will remove from our processed dataset.</p>
-<div id="34bdfe05" class="cell" data-execution_count="219">
+<div id="42704627" class="cell" data-execution_count="219">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># removing tasks without any interactions</span></span>
@@ -749,7 +749,7 @@ Figure&nbsp;1: Skills structure
 </details>
 </div>
 <p>Our dataset now contains only tasks which have some interactions data.</p>
-<p><strong>Converting the number of attempts into a categorical feature</strong>: We will now convert the number of attempts into three categories: zero, low, and high. We will use the following rules to convert number of attempts into categories.</p>
+<p><strong>Converting the number of attempts into a categorical feature</strong>: We will now convert the number of attempts into three categories: zero, low (1), and high(2). We will use the following rules to convert the number of attempts into categories.</p>
 <ul>
 <li><strong>0</strong>: if the number of attempts is 0 representing the student has not interacted with the task.</li>
 <li><strong>1</strong>: if number of attempts is less than or equal to the median of attempts for the same task.</li>
@@ -952,12 +952,12 @@ Figure&nbsp;1: Skills structure
 </div>
 </div>
 </section>
-<section id="buidling-a-bayesian-network" class="level1">
-<h1>Buidling a Bayesian network</h1>
-<p>Now, we will move to building a Bayesian network and learn probabilities from our log dataset. In our dataset, we have interaction data (e.g., number of attempts). Additionally, we have the information about which skill is associated with which task. Those skills, however, are directly observable, also referred to as <code>latent variables</code>.</p>
+<section id="buidling-a-bayesian-network" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Buidling a Bayesian network</h1>
+<p>Now, we will move to building a Bayesian network and learn probabilities from our log dataset. In our dataset, we have interaction data (e.g., number of attempts). Additionally, we have information about which skill is associated with which task. Those skills, however, are directly observable, also referred to as <code>latent variables</code>.</p>
 <p>Our goal is to <strong>build a network using observable (interaction features) and unobservable traits (skills), and learn conditional probabilities</strong> utilizing our log data. For this task, we will use the <strong>Expectation Maximization</strong> algorithm which allows the estimation of probabilities for latent variables.</p>
-<section id="network-structure" class="level2">
-<h2 class="anchored" data-anchor-id="network-structure">Network structure</h2>
+<section id="network-structure" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="network-structure"><span class="header-section-number">3.1</span> Network structure</h2>
 <p>As the first step, we will build a network structure where we will specify nodes (or variables) and the relationship between those nodes. <a href="#fig-nx" class="quarto-xref">Figure&nbsp;2</a> shows a part of our network structure. We can see that the skill <code>expands and reduces common fractions</code> requires the skill of <code>understanding common fractions</code>. Also, these skills influence the number of attempts and success on tasks associated with them. For example, task <code>E1_A1_T1</code> is associated with <code>understanding common fractions</code>; a student with a strong hold on the skill is likely to respond to the task correctly with relatively a lesser number of attempts in comparison with another student with a weak understanding of that skill.</p>
 <div id="cell-fig-nx" class="cell" data-execution_count="323">
 <details class="code-fold">
@@ -1072,7 +1072,7 @@ Figure&nbsp;2: Partial structure of the network
 <span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a>edges_.append((<span class="st">'projecting operations of multiplication of common fractions'</span>,<span class="st">'projecting operations of adding common fractions'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<p>Let’s have a look on the complete network. <a href="#fig-complete" class="quarto-xref">Figure&nbsp;3</a> shows the complete structure of our network.</p>
+<p>Let’s have a look at the complete network. <a href="#fig-complete" class="quarto-xref">Figure&nbsp;3</a> shows the complete structure of our network.</p>
 <div id="cell-fig-complete" class="cell" data-execution_count="202">
 <details class="code-fold">
 <summary>Code</summary>
@@ -1100,11 +1100,11 @@ Figure&nbsp;3: Complete network structure
 </div>
 </div>
 </section>
-<section id="estimating-probabilities-for-skills" class="level2">
-<h2 class="anchored" data-anchor-id="estimating-probabilities-for-skills">Estimating probabilities for skills</h2>
-<p>Now, we will use our network structure and apply an estimation algorithm, i.e., Expectation Maximization (EM). The EM algorithm could be used in cases when the network involves some latent variables (or variables for which data is not available) to learn their probabilities.</p>
-<p>The following code applies the EM algorithm and learn probabilities. Some of those probabilities are shown below.</p>
-<div id="9e6fa430" class="cell" data-execution_count="326">
+<section id="estimating-probabilities-for-skills" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="estimating-probabilities-for-skills"><span class="header-section-number">3.2</span> Estimating probabilities for skills</h2>
+<p>Now, we will use our network structure and apply an estimation algorithm, i.e., Expectation Maximization (EM). The EM algorithm could be used when the network involves some latent variables (or variables for which data is unavailable) to learn their probabilities.</p>
+<p>The following code applies the EM algorithm and learns probabilities. Some of those probabilities are shown below.</p>
+<div id="b5537142" class="cell" data-execution_count="326">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pgmpy.models <span class="im">import</span> BayesianNetwork</span>
@@ -1145,10 +1145,10 @@ Figure&nbsp;3: Complete network structure
 </div>
 </div>
 </section>
-<section id="assigning-learned-probabilities-to-the-bayesian-network" class="level2">
-<h2 class="anchored" data-anchor-id="assigning-learned-probabilities-to-the-bayesian-network">Assigning learned probabilities to the Bayesian network</h2>
+<section id="assigning-learned-probabilities-to-the-bayesian-network" class="level2" data-number="3.3">
+<h2 data-number="3.3" class="anchored" data-anchor-id="assigning-learned-probabilities-to-the-bayesian-network"><span class="header-section-number">3.3</span> Assigning learned probabilities to the Bayesian network</h2>
 <p>As we have probabilities learned from the log data using <strong>Expectation Maximization</strong> algorithm, we will use them to initialize our Bayesian network. Now, this network can be used for inference purposes.</p>
-<div id="f2f1e277" class="cell" data-execution_count="328">
+<div id="e6adf19e" class="cell" data-execution_count="328">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>bayes <span class="op">=</span> new_G</span>
@@ -1159,15 +1159,15 @@ Figure&nbsp;3: Complete network structure
 </details>
 </div>
 </section>
-<section id="performing-inference-using-the-network" class="level2">
-<h2 class="anchored" data-anchor-id="performing-inference-using-the-network">Performing inference using the network</h2>
+<section id="performing-inference-using-the-network" class="level2" data-number="3.4">
+<h2 data-number="3.4" class="anchored" data-anchor-id="performing-inference-using-the-network"><span class="header-section-number">3.4</span> Performing inference using the network</h2>
 <p>Now we will use our network to infer probabilities for different skills given a student’s interaction data with some tasks. For this illustration, we will use interaction data from all the tasks from the trajectory. This should be noted that partial interaction data can also be used. For example, interaction with a single task or activity.</p>
-<section id="visualizing-the-network-with-probabilities" class="level3">
-<h3 class="anchored" data-anchor-id="visualizing-the-network-with-probabilities">Visualizing the network with probabilities</h3>
-<p>For an intuitive interpretation of the resultant probabilities for skills, we will now plot the network with the probabilities updated according to the student’s interaction to the tasks.</p>
+<section id="visualizing-the-network-with-probabilities" class="level3" data-number="3.4.1">
+<h3 data-number="3.4.1" class="anchored" data-anchor-id="visualizing-the-network-with-probabilities"><span class="header-section-number">3.4.1</span> Visualizing the network with probabilities</h3>
+<p>For an intuitive interpretation of the resultant probabilities for skills, we will now plot the network with the probabilities updated according to the student’s interaction with the tasks.</p>
 <p>Let’s use interaction data of a particular student with id <code>Peetri kooli kasutaja 56</code>. We will first obtain the probabilities for different skills given the student’s interaction, and then we will plot the network with the obtained probabilities as the <strong>color of the nodes</strong>.</p>
 <p><a href="#fig-student" class="quarto-xref">Figure&nbsp;4</a> and <a href="#fig-student1" class="quarto-xref">Figure&nbsp;5</a> below show the networks for two different students.</p>
-<div id="3ef91a18" class="cell" data-execution_count="317">
+<div id="9877cd73" class="cell" data-execution_count="317">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pgmpy.inference <span class="im">import</span> VariableElimination</span>
@@ -1684,7 +1684,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 });
 </script>
 </div> <!-- /content -->
-<script>var lightboxQuarto = GLightbox({"loop":false,"closeEffect":"zoom","openEffect":"zoom","descPosition":"bottom","selector":".lightbox"});
+<script>var lightboxQuarto = GLightbox({"selector":".lightbox","descPosition":"bottom","closeEffect":"zoom","openEffect":"zoom","loop":false});
 window.onload = () => {
   lightboxQuarto.on('slide_before_load', (data) => {
     const { slideIndex, slideNode, slideConfig, player, trigger } = data;

@@ -151,12 +151,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#exploring-log-dataset" id="toc-exploring-log-dataset" class="nav-link active" data-scroll-target="#exploring-log-dataset">Exploring log dataset</a></li>
-  <li><a href="#preprocessing-data" id="toc-preprocessing-data" class="nav-link" data-scroll-target="#preprocessing-data">Preprocessing data</a></li>
-  <li><a href="#student-modeling-using-logs" id="toc-student-modeling-using-logs" class="nav-link" data-scroll-target="#student-modeling-using-logs">Student modeling using logs</a>
+  <li><a href="#exploring-log-dataset" id="toc-exploring-log-dataset" class="nav-link active" data-scroll-target="#exploring-log-dataset"><span class="header-section-number">1</span> Exploring log dataset</a></li>
+  <li><a href="#preprocessing-data" id="toc-preprocessing-data" class="nav-link" data-scroll-target="#preprocessing-data"><span class="header-section-number">2</span> Preprocessing data</a></li>
+  <li><a href="#student-modeling-using-logs" id="toc-student-modeling-using-logs" class="nav-link" data-scroll-target="#student-modeling-using-logs"><span class="header-section-number">3</span> Student modeling using logs</a>
   <ul class="collapse">
-  <li><a href="#assiging-skills-for-each-task" id="toc-assiging-skills-for-each-task" class="nav-link" data-scroll-target="#assiging-skills-for-each-task">Assiging skills for each task</a></li>
-  <li><a href="#creating-bayesian-network" id="toc-creating-bayesian-network" class="nav-link" data-scroll-target="#creating-bayesian-network">Creating Bayesian network</a></li>
+  <li><a href="#assiging-skills-for-each-task" id="toc-assiging-skills-for-each-task" class="nav-link" data-scroll-target="#assiging-skills-for-each-task"><span class="header-section-number">3.1</span> Assiging skills for each task</a></li>
+  <li><a href="#creating-bayesian-network" id="toc-creating-bayesian-network" class="nav-link" data-scroll-target="#creating-bayesian-network"><span class="header-section-number">3.2</span> Creating Bayesian network</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -203,8 +203,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>This post presents a step-by-step process employed to model students’ knowledge using interaction log data. For the analysis, log data from an educational tool, named <a href="https://vara.h5p.ee/">vara</a>, have been used.</p>
 <p>Vara is a sandbox platform built upon Drupal to facilitates the implementation of research ideas in the educational domain. This tool allows teachers/researchers to create H5P-based learning materials. Additionally, the tool records students’ interactions in the form of log data.</p>
 <p>This post analyzes those interaction data in the context of new functionality added to the Vara, i.e., instructional trajectories. The instructional trajectory is a way to group learning materials and provide a structure among those groups of learning materials. Each subject is decomposed into groups known as <strong>Episodes</strong> which focus on a particular concept in the subject. Each episode is further decomposed into <strong>Activities</strong> which are then further divided into <strong>Tasks</strong>. Each task has a pre-specified skill(s) associated with it.</p>
-<section id="exploring-log-dataset" class="level2">
-<h2 class="anchored" data-anchor-id="exploring-log-dataset">Exploring log dataset</h2>
+<section id="exploring-log-dataset" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Exploring log dataset</h1>
 <p>The goal is to generate open learner models using a log dataset of instructional trajectories. The log dataset contains students’ interaction with each task. More concretely, each interaction is recorded in the form of a set of attributes, e.g., time spent, number of attempts, score, number of times hints used, etc.</p>
 <div id="2d38c518" class="cell" data-execution_count="3">
 <details class="code-fold">
@@ -380,8 +380,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Each record in the dataset presents a particular student’s interaction with all the tasks in the instructional trajectory. There are several instances when students have not interacted with tasks. In those cases, missing values were recorded for interactions.</p>
 </section>
-<section id="preprocessing-data" class="level2">
-<h2 class="anchored" data-anchor-id="preprocessing-data">Preprocessing data</h2>
+<section id="preprocessing-data" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Preprocessing data</h1>
 <p>As the first step, we will transform the dataset from its current form to a form where each record represents a student’s interaction with a single task.</p>
 <div id="9b02d083" class="cell" data-execution_count="4">
 <details class="code-fold">
@@ -641,8 +641,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>The above dataset now contains transformed data. Each record (line) represents interaction with a single task. For example, the record number <code>2538</code> presents interaction-related information for a user (Peetri Kooli kasutaja 78) interacting with a task <code>E12_A1_T6</code>. The task contains information about <strong>Episode</strong> as well as <strong>Activity</strong>. For example, <code>E12_A1_T6</code> represents a task <code>T6</code> in Episode 12 Activity 1.</p>
 </section>
-<section id="student-modeling-using-logs" class="level1">
-<h1>Student modeling using logs</h1>
+<section id="student-modeling-using-logs" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Student modeling using logs</h1>
 <p>Now, we will move further toward building students’ knowledge networks using bayesian modeling. For our exploration, we will focus on a short part of the dataset.</p>
 <p>Let’s extract data on a particular student’s interaction with tasks of a particular Episode. The following code extracts data for a user (78) and episode 11.</p>
 <div id="0a44e804" class="cell" data-execution_count="18">
@@ -657,8 +657,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>ep_78.to_csv(<span class="st">'ep_78.csv'</span>, index<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
-<section id="assiging-skills-for-each-task" class="level2">
-<h2 class="anchored" data-anchor-id="assiging-skills-for-each-task">Assiging skills for each task</h2>
+<section id="assiging-skills-for-each-task" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="assiging-skills-for-each-task"><span class="header-section-number">3.1</span> Assiging skills for each task</h2>
 <p>Next, we will specify skills targeted by each task. Here, one or more than one skill can be associated with each task. In our current dataset, we don’t have that information.</p>
 <p>Therefore, to allow our exploration, we have <strong>added some dummy skills (e.g., A, B, C)</strong> to our processed dataset.</p>
 <div id="e6349d6c" class="cell" data-execution_count="6">
@@ -861,8 +861,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="creating-bayesian-network" class="level2">
-<h2 class="anchored" data-anchor-id="creating-bayesian-network">Creating Bayesian network</h2>
+<section id="creating-bayesian-network" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="creating-bayesian-network"><span class="header-section-number">3.2</span> Creating Bayesian network</h2>
 <p>Now, we will use our processed dataset and build a Bayesian network. There could be different goals here, e.g., learning network structure or dependence among skills and attributes; learning conditional probabilities of an already given network.</p>
 <p>Our focus is on the second case, i.e., learning conditional probabilities given a network structure. To do that we will <strong>assume some dummy relationship among skills and attributes</strong> (this structure could come from a domain expert as well for real-world cases).</p>
 <p>Our assumed structure is</p>
